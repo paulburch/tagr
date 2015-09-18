@@ -1,0 +1,9 @@
+CHANGES in tagr VERSION 0.09
+
+0 uploaded to Github https://github.com/paulburch/tagr
+
+CHANGES in tagr VERSION 0.07
+
+o variance now calculated for "Chapman" method of single_release when catch is in weight
+
+o improvments to documentation for single_release bootstrap method and package

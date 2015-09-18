@@ -1,0 +1,297 @@
+---
+title: "Estimating population size from single release tag-recapture data"
+author: "Paul Burch"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimating population size from single release data}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: tagr.bib
+---
+
+# Introduction
+
+This vignette explores using a single release tag-recapture model, generally known as the Petersen model to estimate abundance of a fish population in a lake (@Seber1982abundance). The Petersen estimator of abundance is represented by 
+
+$$ \hat{N} = \frac{n_{1}n_{2}}{m_{2}}$$
+
+where $\hat{N}$ is the estimated population numbers, $n_{1}$ is the number of tagged fish released in the first survey, $n_{2}$ is the number of fish captured on a subsequent survey and $m_{2}$ is the number of these that were tagged. This estimate is biased when there are a small number of recaptures (@Seber1982abundance). An adjustment proposed by @Chapman1951properties is
+
+$$ \hat{N} = \frac{(n_{1}+1)(n_{2}+1)}{m_{2}+1} -1$$.
+
+Inferences from tagging models are based on the assumption that the tagged sample is homogeneous with the untagged population. Specifically, the sample must mix immediately with the population upon release, recaptures are independent of one another, there is no emigration or immigration all recaptured tags are reported and there is no tag loss or tag induced mortality. These assumptions are discussed in detail by @Schwarz1999abundance.
+
+We adjust the population estimate for estimated tag-induced mortality and natural mortality. The uncertainty around the population is quantified using a non-parametric bootstrap (@Efron1993introduction).
+
+# Tagging Data
+
+Lake Sorell in Tasmania, Australia was infested with common carp (_Cyprinus carpio_) in the early 1990s. By 2009 efforts to eradicate carp from Lake Sorell had reduced the carp population to around 100 when a spawning event in the Austral spring of 2009/10 resulted in the recruitment of a large cohort of fish. In January 2012 a sample of 803 juvenile carp ~ 200mm were captured, double tagged with conventional, individually numbered, T-bar tags and released in two release events on the 2nd and 3rd of January 2012.
+
+The **carptags** dataset provides the release event (either 1 or 2), the number of tags on recaptured fish (1, 2 or NA) the date and season of recapture which are NA if the fish has yet not been recovered. 
+
+
+```{r}
+library(tagr)
+attach(carptags)
+head(carptags)
+```
+
+## Initial Tag Induced Mortality
+
+Initial tag-induced mortality is the mortality associated with the tagging process which we assume occurs within a short period following a tags release. This parameter is difficult to estimate as it is confounded with natural mortality. In this study we use the ratio of recaptures from the two tag release events, assuming one event has zero tag-induced mortality, to estimate a lower bound for initial tag-induced mortality. 
+
+The number of tag recaptures by recapture season and release event shows that tags from the first release event (2 January 2012) are under-represented in the recaptures with similar numbers of recaptures from each release group where group 1 released `r nrow(carptags[carptags$release==1,])` fish while group 2 released `r nrow(carptags[carptags$release==2,])`.
+
+```{r}
+with(carptags, table(season, release))
+```
+
+We estimate the tag-induced mortality as the ratio of tags recaptured in the first six months after release assuming that there is zero tag-induced mortality in the second release group.
+
+First we extract the number of tagged carp in each release event
+
+```{r}
+(rel1 <- nrow(carptags[carptags$release==1,]))
+(rel2 <- nrow(carptags[carptags$release==2,]))
+
+```
+
+then the recaptures by season from each release event are
+
+```{r}
+(recaps1 <- with(carptags, table(season, release))[,1])
+(recaps2 <- with(carptags, table(season, release))[,2])
+
+```
+
+We observed `r recaps1[1]` recaptures from the first release group which is very similar to the number observed from the second release event, however, there were `r nrow(carptags[carptags$release==1,]) - nrow(carptags[carptags$release==2,])` more tagged fish released in the first event. In this case we just consider the first season of recaptures, however, we obtain similar estimates if we use later seasons.
+
+The observed recapture rate of the first release group in the 2011/12 season is
+
+```{r}
+(rate1 <- (recaps1[1]/rel1))
+```
+
+Compared with the second release our observed recapture rate is 
+
+```{r}
+(rate2 <- (recaps2[1]/rel2))
+```
+
+The ratio of recaptures from the first and second release groups can provide us with an estimate of the difference in survival rates of `r rate1/rate2`, or the mortality rate is `r 1 - (rate1/rate2)`. This equates to `r rel1 * (1 - (rate1/rate2))` fish in the first release group dying due to the tagging process. 
+
+If we make the assumption that the second release group suffered zero mortality during the tagging process then the overall rate of tag-induced mortality rate (assuming no mortality in the second release group) is
+
+```{r}
+(rel1 - (rel1 * (recaps1[1] / (rel1 * (rate2))))) / (rel1+rel2)
+
+```
+
+or ~ 20%. As this is a lower bound on the initial tag-induced mortality as it assumes the second release group suffered zero tagging mortality. As it is unlikely that fish released in one tagging event suffer some tag-induced mortality while those released in the other event suffer none, we also estimate population size from two scenarios assuming an 25% and 30% tag-induced mortality.
+
+## Chronic Tag Shedding
+
+In this study all fish were double tagged so tag-shedding in this case refers to the loss of both tags. We can estimate the probability of a fish losing both tags from the proportion of fish losing one tag
+
+```{r}
+ls <- with(carptags, table(season, tags))
+ls_prop <- ls[,1]/ls[,2]
+cbind(ls, ls_prop)
+
+```
+
+In the 2012/13 season there were ~ 8% of fish were recaptured with a single tag. A simple, although biased method of estimating tag loss is to take the square of single tag loss rate, giving ~0.5% of fish losing both tags. This estimate is biased and likely over-estimates tag loss, however, it is still less than 1% per annum, consequenty tag shedding was assumed to be zero.
+
+
+## Chronic Tag Induced Mortality
+
+If we assume that the catchability of tagged and untagged fish is then we can estimate ongoing or chronic tag-induced mortality from changes in the ratio of tagged and untagged fish over time. In fisheris studies the mixing of tagged and untagged fish is often accounted for by excluding any recaptures in the year of release (@Hoenig1998mixing). In this case, we will assume six months is a sufficient time for tagged fish to mix and not consider recaptures in 2011/12 other than to decrement the number of tagged fish in the population. As there was little fishing in the Austral winter this is probably reasonable.
+
+The total catches in the four seasons were  
+
+```{r}
+catches <- c(3181, 4377, 2417, 1253)
+
+```
+
+and the tagged catch was
+
+```{r}
+tagged_catch <- with(carptags, (table(season)))
+
+```
+
+The proportions of tagged fish in the catches each season are
+
+```{r}
+prop <- tagged_catch/catches
+
+```
+
+The estimate of the chronic tag-induced mortality from 2012/13 to 2013/14 is
+
+```{r}
+1 - (prop[3] / prop[2])
+
+```
+
+and the estimate from 2013/14 to 2014/15 is
+
+```{r}
+1 - (prop[4] / prop[3])
+
+```
+
+We assume a tag-induced mortality rate of 17%.
+
+
+## Natural Mortality
+
+Natural mortality is defined as the mortality from all sources other than fishing. For carp in the adjacent Lake Crescent, annual natural mortality was estimated by @Donkers2012carp to be ~4%. While this estimate is low compared with estimates of ~20% and 26% for males and females in the Murray River (@Brown2005biology) the conservative estimate of 4% annual natural mortality was used in this analysis.
+
+
+# Population Estimate
+
+We estimate population size and quantify the uncertainty of the estimate by bootstrapping the hauls (@Efron1993introduction) with confidence intervals obtained bootstrap samples using the percentile method.
+
+The **carphauls** dataset contains the total number of carp and the number that were tagged from daily fishing in the 2014/15 season.
+
+```{r}
+attach(carphauls)
+head(carphauls)
+```
+
+We need to provide the recaptures of tags over previous seasons
+
+```{r}
+(prior_recaps <- recaps1[1:3] + recaps2[1:3])
+
+```
+
+and the recaptures in the current season from the tagging data were
+
+```{r}
+(recaps <- recaps1[4] + recaps2[4])
+recaps
+```
+
+which should match the number of tags from the haul data
+
+```{r}
+sum(carphauls$tagged)
+```
+
+
+We then have the number of tags recaptured up until the current season (2014/15) is `r sum(prior_recaps)`. There were `r sum(carphauls$tagged)` tags recaptured in 2014/15 out of a total catch of `r sum(carphauls$catch)`carp. 
+
+This data is used to evaluate three scenarios of tag-induced mortality, 20%, 25% and 30%. 
+
+## 20% Tag induced mortality
+
+We set a random number seed for repeatability.
+
+```{r}
+set.seed(15)
+```
+
+This scenario used the estimated lower bound of tag induced mortality of 20% determined by applying the 34% mortality observed in the 1st release group across all released tags.
+
+```{r}
+est_1 <- single_release(tags = (rel1 + rel2),
+                        catch = carphauls$catch,
+                        recaps = carphauls$tagged,
+                        prior_recaps = prior_recaps,
+                        method = "Chapman",
+                        unit = "numbers",
+                        type = 2,
+                        tag_mort = 0.2,
+                        nat_mort = 0.04,
+                        chronic_mort = 0.17)
+
+summary(est_1)
+
+```
+
+The uncertainty is obtained using the **bootstrap** method.
+
+```{r}
+ci_1 <- bootstrap(est_1, nboot=1000)
+summary(ci_1)
+```
+
+
+
+
+## 25% Tag induced mortality
+
+This scenario assumed an intial tag induced mortality of 25%.
+
+```{r}
+est_2 <- single_release(tags = (rel1 + rel2),
+                        catch = carphauls$catch,
+                        recaps = carphauls$tagged,
+                        prior_recaps = prior_recaps,
+                        method = "Chapman",
+                        unit = "numbers",
+                        type = 2,
+                        tag_mort = 0.25,
+                        nat_mort = 0.04,
+                        chronic_mort = 0.17)
+
+summary(est_2)
+
+```
+
+
+Again we estimate the uncertainty using the **bootstrap** method.
+
+```{r}
+ci_2 <- bootstrap(est_2, nboot=1000)
+summary(ci_2)
+```
+
+
+
+## 30% Tag induced mortality
+
+```{r}
+est_3 <- single_release(tags = (rel1 + rel2),
+                        catch = carphauls$catch,
+                        recaps = carphauls$tagged,
+                        prior_recaps = prior_recaps,
+                        method = "Chapman",
+                        unit = "numbers",
+                        type = 2,
+                        tag_mort = 0.3,
+                        nat_mort = 0.04,
+                        chronic_mort = 0.17)
+
+summary(est_3)
+
+```
+
+
+Again we estimate the uncertainty using the **bootstrap** method.
+
+```{r}
+ci_3 <- bootstrap(est_3, nboot=1000)
+summary(ci_3)
+```
+
+# Discussion
+
+
+We provide Chapman/Petersen estimates of the population size of common carp in Lake Sorell at 30 June 2015 from three scenarios of initial tag-induced mortality (20%, 25% and 30%) along with the 95% confidence intervals obtained using a bootstrap. These estimates are based on the catches of carp in the 2014/15 season and account for assumed annual natural mortality rate of 4% (@Donkers2012carp) and an estimated ongoing (chronic) tag-induced mortality of 17%. We estimated the lower bound on initial tag-induced mortality to be 20% from the ratio of recaptures from the two release groups, assuming the second release group suffered zero tag-induced mortality. Scenarios assuming 25% and 30% tag-induced mortality provide plausable estimates of the population size if we assume the second release group does suffer some tagging mortality.
+
+
+# Session Information
+
+This vignette was created using Rmarkdown and the following R packages
+
+```{r}
+sessionInfo()
+```
+
+
+# References

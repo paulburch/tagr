@@ -1,0 +1,16 @@
+Package: tagr
+Type: Package
+Title: Tagging models for the estimation of abundance and demographic parameters
+Version: 0.0.9
+Date: 2015-16-09
+Author: Paul Burch
+Maintainer: Paul Burch <paul.burch77@gmail.com>
+Depends: 
+    R (>= 3.0.2)
+Suggests:
+    knitr,
+    testthat
+VignetteBuilder: knitr
+Description: Implemention of models for the estimation of abundance and demographic parameters from tagging data. Applications include scientific surveys and exploited bird and animal populations where tags are returned by hunters or commercial fishers.
+LazyData: yes
+License: GPL-3
