@@ -13,6 +13,9 @@ abundance
 
 Implementation of Petersen and Chapman estimators (Seber 1982)
 along with bootstrapped confidence intervals
+}
+
+\section{Vignettes}{
 
 To learn more about tagr, start with the vignettes:
 \code{browseVignettes(package = "tagr")}

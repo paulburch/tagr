@@ -9,13 +9,13 @@
 \usage{
 chapman_n(tags, catch, recaps)
 
-chapman_wt(tags, catch, recaps)
+chapman_wt(tags, catch, recaps, mean_wt = 0)
 
 petersen(tags, catch, recaps)
 
-single_release(tags, catch, recaps, prior_recaps = 0, method, unit, type,
-  tag_mort = 0, reporting = 1, nat_mort = 0, chronic_shed = 0,
-  chronic_mort = 0)
+single_release(tags, catch, recaps, mean_wt = 0, prior_recaps = 0, method,
+  unit, type, tag_mort = 0, reporting = 1, nat_mort = 0,
+  chronic_shed = 0, chronic_mort = 0)
 }
 \arguments{
 \item{tags}{number of marked animals released}
@@ -23,6 +23,8 @@ single_release(tags, catch, recaps, prior_recaps = 0, method, unit, type,
 \item{catch}{number or weight of animals captured and checked for tags on the second survey}
 
 \item{recaps}{vector of number of marked animals recaptured}
+
+\item{mean_wt}{mean weight of a single fish (optional argument for Chapman weight method)}
 
 \item{prior_recaps}{vector of subsequent recaptures (first year this represents within season recaptures)}
 

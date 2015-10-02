@@ -28,22 +28,6 @@
 ## lambda: tag reporting rate
 ## u(F,M): exploitation rate
 
-## Competing processes
-## The number of tags remaining in the population and available for recapture is 
-## estimated by applying the processes below in the following order Type I (pulse fishery)
-## 1. Apply initial tag induced mortality
-## 2. Remove the recapture in a year divided by the tag reporting rate
-## 3. Remove tagged fish due to estimated natural mortality and tag loss rates
-## 4. 
-## 
-## For a fishery that operates throughout the year (Ricker Type II) fishing and natural mortality
-## competed to deplete the tagged population. To account for this we do the follwoing
-## 1. Apply initial tag induced mortality
-## 2. Remove of half the recaptures in the year of release divided by the estimated tag reporting rate
-## 3. Removal of tagged fish due to estimated natural mortality and tag loss rates
-
-
-
 ## investigate further http://adv-r.had.co.nz/Exceptions-Debugging.html#condition-handling
 check_srelease_inputs <- function(tags, catch, recaps){
   ## define the check variable
@@ -101,15 +85,15 @@ chapman_n <- function(tags, catch, recaps){
 
 #' @export
 #' @rdname single_release
-chapman_wt <- function(tags, catch, recaps){
+chapman_wt <- function(tags, catch, recaps, mean_wt=0){
   ## check function inputs
   check <- check_srelease_inputs(tags, catch, recaps)
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate
-    N_hat <- ((tags + 1)*catch)/(recaps + 1)
+    N_hat <- (((tags + 1)*(catch + mean_wt))/(recaps + 1)) - mean_wt
     ## calculate the variance
-    var_N <- ((tags + 1)*catch*(tags - recaps)*(catch - recaps))/
+    var_N <- ((tags + 1)*(catch + mean_wt)*(tags - recaps)*(catch - mean_wt*recaps))/
       (((recaps + 1)^2)*(recaps + 2))
     obj <- c(N_hat, var_N)
     }else{
@@ -166,6 +150,7 @@ petersen <- function(tags, catch, recaps){
 #' @param tags number of marked animals released
 #' @param catch number or weight of animals captured and checked for tags on the second survey
 #' @param recaps vector of number of marked animals recaptured
+#' @param mean_wt mean weight of a single fish (optional argument for Chapman weight method)
 #' @param prior_recaps vector of subsequent recaptures (first year this represents within season recaptures)
 #' @param method method
 #' @param unit measurement unit (numbers, kilograms, tonnes)
@@ -203,7 +188,7 @@ petersen <- function(tags, catch, recaps){
 #' summary(boot_fit)
 #' 
 #' ## End(Not run)
-single_release <- function(tags, catch, recaps, prior_recaps=0, method, unit, type, tag_mort=0, reporting=1, nat_mort=0, chronic_shed=0, chronic_mort=0)  {
+single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0, method, unit, type, tag_mort=0, reporting=1, nat_mort=0, chronic_shed=0, chronic_mort=0)  {
   ## check the releases are > recaptures
   if((sum(recaps)+sum(prior_recaps)) > tags) stop("more tagged individuals have been recaptured than were released")
   ## check the method
@@ -275,7 +260,7 @@ single_release <- function(tags, catch, recaps, prior_recaps=0, method, unit, ty
       est <- chapman_n(adj_tags, sum(catch), adj_recaps)
     }else if(method=="Chapman" & unit %in% c("kg", "tonnes")){
       ## Chapman weight
-      est <- chapman_wt(adj_tags, sum(catch), adj_recaps)
+      est <- chapman_wt(adj_tags, sum(catch), adj_recaps, mean_wt)
     }else stop("method and unit combination not available")
     }
   }
@@ -289,6 +274,7 @@ single_release <- function(tags, catch, recaps, prior_recaps=0, method, unit, ty
               "Type" = type,
               "Releases" = tags,
               "Hauls" = hauls,
+              "MeanWeight" = mean_wt,
               "PriorRecaps" = prior_recaps,
               "TagMort" = tag_mort, 
               "Reporting" = reporting,
@@ -381,7 +367,7 @@ bootstrap.srelease <- function(x, nboot, ...){
         boot_est[j,] <- c(suppressWarnings(chapman_n(adj_tags, j_catch, j_recaps)), j_recaps)
       }else if(x$Method=="Chapman" & x$Unit %in% c("kg", "tonnes")){
         ## Chapman weight
-        boot_est[j,] <- c(suppressWarnings(chapman_wt(adj_tags, j_catch, j_recaps)), j_recaps)
+        boot_est[j,] <- c(suppressWarnings(chapman_wt(adj_tags, j_catch, j_recaps, x$MeanWeight)), j_recaps)
       }
     }
   }
@@ -420,9 +406,10 @@ summary.srelease <- function(object, ...){
   ## print the model inputs 
   cat(x$Method, "estimate of", x$Unit, "\n")
   print(x$Estimate)
+  cat("With cv", sqrt(x$Estimate["var_N"]) / x$Estimate["N_hat"], "\n")
   ## summarise the inputs
   cat(x$Releases, "tags were released and", sum(x$PriorRecaps), "were subsequently recaptured prior to this season \n")
-  cat(sum(x$Hauls["catch"]), x$Unit, "were captured in the current survey and", sum(x$Hauls["recaps"]), " were tagged \n")
+  cat(sum(x$Hauls["catch"]), x$Unit, "were captured in the current survey and", sum(x$Hauls["recaps"]), "were tagged \n")
   cat("The following parameters were specified \n")
   cat("Initial tag-induced mortality =", x$TagMort, "\n")
   cat("Tag reporting rates by season =", x$Reporting, "\n")
@@ -431,18 +418,22 @@ summary.srelease <- function(object, ...){
   cat("Chronic tag-induced mortality by season =", x$ChronicMort, "\n")
 }
 
-##summary(as)
 
-#' S3 mehtod for bootstrapped confidence intervals
+#' S3 method for bootstrapped confidence intervals
 #'
 #' Calculate bootstrapped confidence intervals for object of
 #' class bsamples
 #' @param object object of class bsamples
+#' @param quantiles bootstrap quantiles (default 0.025, 0.5, 0.975)
 #' @param ... additional parameters
 #' @export
-summary.bsamples <- function(object, ...){
+summary.bsamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
   ## define the quantiles
-  quants <- quantile(object$Boot_estimates$boot_est, probs=c(0.025, 0.5, 0.975), na.rm=TRUE)
+  quants <- quantile(object$Boot_estimates$boot_est, probs=quantiles, na.rm=TRUE)
+  se <- sd(object$Boot_estimates$boot_est, na.rm=TRUE)
+  cv <- se / object$srelease_obj$Estimate["N_hat"]
+  names(se) <- "boot_SE"
+  names(cv) <- "boot_CV"
   ## extract the information regarding the 
   ## print the model inputs 
   cat(object$srelease_obj$Method, "estimate of", object$srelease_obj$Unit, "\n")
@@ -455,8 +446,10 @@ summary.bsamples <- function(object, ...){
   cat("Chronic tag shedding by season =", object$srelease_obj$ChronicShed, "\n")
   cat("Chronic tag-induced mortality by season =", object$srelease_obj$ChronicMort, "\n")
   ## construct the output
-  out <- c(object$srelease_obj$Est[1], quants)
+  out <- c(object$srelease_obj$Est[1], se, cv, quants)
   #names(out) <- c("Estimate", "lower", "upper")
   out
 }
+
+
 

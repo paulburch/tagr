@@ -2,12 +2,14 @@
 % Please edit documentation in R/single_release.R
 \name{summary.bsamples}
 \alias{summary.bsamples}
-\title{S3 mehtod for bootstrapped confidence intervals}
+\title{S3 method for bootstrapped confidence intervals}
 \usage{
-\method{summary}{bsamples}(object, ...)
+\method{summary}{bsamples}(object, quantiles = c(0.025, 0.5, 0.975), ...)
 }
 \arguments{
 \item{object}{object of class bsamples}
+
+\item{quantiles}{bootstrap quantiles (default 0.025, 0.5, 0.975)}
 
 \item{...}{additional parameters}
 }

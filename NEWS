@@ -1,9 +1,23 @@
+CHANGES in tagr VERSION 0.11
+
+o adding the option of including the mean weight of a single fish to chapman_wt and associated functions
+
+o correcting a minor error in chapman_wt variance
+
+o added option to specify the quantiles probabilities for summary.bsamples method
+
+o added bootstrapped standard error and coefficient of variation to summary.bsamples method
+
+o added coefficient of variation to summary.srelease
+
+o additional tests for single_release and associated functions
+
 CHANGES in tagr VERSION 0.09
 
-0 uploaded to Github https://github.com/paulburch/tagr
+o uploaded to Github https://github.com/paulburch/tagr
 
 CHANGES in tagr VERSION 0.07
 
 o variance now calculated for "Chapman" method of single_release when catch is in weight
 
-o improvments to documentation for single_release bootstrap method and package
+o improvments to documentation for single_release bootstrap method and the package
