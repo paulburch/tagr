@@ -1,3 +1,7 @@
+CHANGES in tagr DEV VERSION 0.12
+
+o correction to chapman_n, was adding 1 rather than subtracting 1
+
 CHANGES in tagr VERSION 0.11
 
 o adding the option of including the mean weight of a single fish to chapman_wt and associated functions
