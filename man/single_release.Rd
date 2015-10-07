@@ -18,11 +18,11 @@ single_release(tags, catch, recaps, mean_wt = 0, prior_recaps = 0, method,
   chronic_shed = 0, chronic_mort = 0)
 }
 \arguments{
-\item{tags}{number of marked animals released}
+\item{tags}{number of marked animals released (note these must be whole numbers for the bootstrap to work)}
 
-\item{catch}{number or weight of animals captured and checked for tags on the second survey}
+\item{catch}{vector of the number or weight of animals captured and checked for tags by haul on the second survey}
 
-\item{recaps}{vector of number of marked animals recaptured}
+\item{recaps}{vector of number of marked animals recaptured by haul}
 
 \item{mean_wt}{mean weight of a single fish (optional argument for Chapman weight method)}
 
@@ -30,7 +30,7 @@ single_release(tags, catch, recaps, mean_wt = 0, prior_recaps = 0, method,
 
 \item{method}{method}
 
-\item{unit}{measurement unit (numbers, kilograms, tonnes)}
+\item{unit}{measurement unit (numbers, kg, tonnes)}
 
 \item{type}{do we assume fishing occurs over a short period (Ricker type 1) or
 is extended over the year and competes with natural mortality and tag sheddding (Ricker type 2)}
