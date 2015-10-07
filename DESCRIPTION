@@ -1,8 +1,8 @@
 Package: tagr
 Type: Package
 Title: Tagging models for the estimation of abundance and demographic parameters
-Version: 0.0.11
-Date: 2015-02-10
+Version: 0.0.12
+Date: 2015-99-10
 Author: Paul Burch
 Maintainer: Paul Burch <paul.burch77@gmail.com>
 Depends: 
