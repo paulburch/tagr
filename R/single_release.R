@@ -14,6 +14,7 @@
 ##*******************************************###
 ## TODO
 ## Think about adding how double tagging affects tag-loss
+## Add the estimated number of tags in the population
 ## Add the estimation of multiple methods from the same bootstrapped sample
 ##
 ##*******************************************###
@@ -71,7 +72,7 @@ chapman_n <- function(tags, catch, recaps){
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate
-    N_hat <- ((tags + 1)*(catch + 1))/(recaps + 1) + 1 
+    N_hat <- (((tags + 1)*(catch + 1))/(recaps + 1)) - 1 
     ## calculate the variance
     var_N <- ((tags + 1)*(catch + 1)*(tags - recaps)*(catch - recaps))/
       (((recaps + 1)^2)*(recaps + 2))
@@ -147,13 +148,13 @@ petersen <- function(tags, catch, recaps){
 #' 4) The remaining within season recaptures divided by the tag reporting rate are removed 
 #' 
 #' 5) The remaining natural mortality and chronic tag loss and tag-induced mortality is applied.
-#' @param tags number of marked animals released
-#' @param catch number or weight of animals captured and checked for tags on the second survey
-#' @param recaps vector of number of marked animals recaptured
+#' @param tags number of marked animals released (note these must be whole numbers for the bootstrap to work)
+#' @param catch vector of the number or weight of animals captured and checked for tags by haul on the second survey
+#' @param recaps vector of number of marked animals recaptured by haul
 #' @param mean_wt mean weight of a single fish (optional argument for Chapman weight method)
 #' @param prior_recaps vector of subsequent recaptures (first year this represents within season recaptures)
 #' @param method method
-#' @param unit measurement unit (numbers, kilograms, tonnes)
+#' @param unit measurement unit (numbers, kg, tonnes)
 #' @param type do we assume fishing occurs over a short period (Ricker type 1) or
 #' is extended over the year and competes with natural mortality and tag sheddding (Ricker type 2) 
 #' @param tag_mort intitial tag-induced mortality
