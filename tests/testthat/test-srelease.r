@@ -12,7 +12,7 @@ test_that("test srelease inputs", {
 
 ## test estimates of population size
 test_that("test srelease N_hat", {
-  expect_that(chapman_n(tags=100, catch=100, recaps=10)[["N_hat"]], equals(928.3636, tolerance=1e-4)) 
+  expect_that(chapman_n(tags=100, catch=100, recaps=10)[["N_hat"]], equals(926.3636, tolerance=1e-4)) 
   expect_that(chapman_wt(tags=100, catch=100, recaps=10, mean_wt=5)[["N_hat"]], equals(959.0909, tolerance=1e-4))
   expect_that(petersen(tags=100, catch=100, recaps=10)[["N_hat"]], equals(1000, tolerance=1e-4)) 
   })
