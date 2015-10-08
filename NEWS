@@ -1,8 +1,10 @@
-CHANGES in tagr DEV VERSION 0.12
+CHANGES in tagr VERSION 0.0.13
 
-o correction to chapman_n, was adding 1 rather than subtracting 1
+o correction to chapman_n, was adding 1 rather than subtracting 1 (thanks to Kenji Taki)
 
-CHANGES in tagr VERSION 0.11
+o inst/doc folder with vignette added to github
+
+CHANGES in tagr VERSION 0.0.11
 
 o adding the option of including the mean weight of a single fish to chapman_wt and associated functions
 
@@ -16,11 +18,11 @@ o added coefficient of variation to summary.srelease
 
 o additional tests for single_release and associated functions
 
-CHANGES in tagr VERSION 0.09
+CHANGES in tagr VERSION 0.0.9
 
 o uploaded to Github https://github.com/paulburch/tagr
 
-CHANGES in tagr VERSION 0.07
+CHANGES in tagr VERSION 0.0.7
 
 o variance now calculated for "Chapman" method of single_release when catch is in weight
 
