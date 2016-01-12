@@ -2,6 +2,8 @@ CHANGES in tagr DEV VERSION 0.0.14
 
 o ilogit transformation functions moved to 'tagsurviv' package
 
+o upgrade to roxygen2 version 5.0
+
 CHANGES in tagr VERSION 0.0.13
 
 o correction to chapman_n, was adding 1 rather than subtracting 1 (thanks to Kenji Taki)
