@@ -1,11 +1,11 @@
 ---
 title: "Estimating population size from single release tag-recapture data"
 author: "Paul Burch"
-date: "`r Sys.Date()`"
+date: "18 August 2015"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Estimating population size from single release data}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 bibliography: tagr.bib
 ---

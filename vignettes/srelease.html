@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Paul Burch" />
+
+<meta name="date" content="2015-08-18" />
+
+<title>Estimating population size from single release tag-recapture data</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; }
+code > span.dt { color: #902000; }
+code > span.dv { color: #40a070; }
+code > span.bn { color: #40a070; }
+code > span.fl { color: #40a070; }
+code > span.ch { color: #4070a0; }
+code > span.st { color: #4070a0; }
+code > span.co { color: #60a0b0; font-style: italic; }
+code > span.ot { color: #007020; }
+code > span.al { color: #ff0000; font-weight: bold; }
+code > span.fu { color: #06287e; }
+code > span.er { color: #ff0000; font-weight: bold; }
+</style>
+
+
+<link href="data:text/css,body%20%7B%0A%20%20background%2Dcolor%3A%20%23fff%3B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20max%2Dwidth%3A%20700px%3B%0A%20%20overflow%3A%20visible%3B%0A%20%20padding%2Dleft%3A%202em%3B%0A%20%20padding%2Dright%3A%202em%3B%0A%20%20font%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0A%20%20font%2Dsize%3A%2014px%3B%0A%20%20line%2Dheight%3A%201%2E35%3B%0A%7D%0A%0A%23header%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0A%0A%23TOC%20%7B%0A%20%20clear%3A%20both%3B%0A%20%20margin%3A%200%200%2010px%2010px%3B%0A%20%20padding%3A%204px%3B%0A%20%20width%3A%20400px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20border%2Dradius%3A%205px%3B%0A%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20font%2Dsize%3A%2013px%3B%0A%20%20line%2Dheight%3A%201%2E3%3B%0A%7D%0A%20%20%23TOC%20%2Etoctitle%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%20%20font%2Dsize%3A%2015px%3B%0A%20%20%20%20margin%2Dleft%3A%205px%3B%0A%20%20%7D%0A%0A%20%20%23TOC%20ul%20%7B%0A%20%20%20%20padding%2Dleft%3A%2040px%3B%0A%20%20%20%20margin%2Dleft%3A%20%2D1%2E5em%3B%0A%20%20%20%20margin%2Dtop%3A%205px%3B%0A%20%20%20%20margin%2Dbottom%3A%205px%3B%0A%20%20%7D%0A%20%20%23TOC%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dleft%3A%20%2D2em%3B%0A%20%20%7D%0A%20%20%23TOC%20li%20%7B%0A%20%20%20%20line%2Dheight%3A%2016px%3B%0A%20%20%7D%0A%0Atable%20%7B%0A%20%20margin%3A%201em%20auto%3B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dcolor%3A%20%23DDDDDD%3B%0A%20%20border%2Dstyle%3A%20outset%3B%0A%20%20border%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0A%20%20border%2Dwidth%3A%202px%3B%0A%20%20padding%3A%205px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0A%20%20border%2Dwidth%3A%201px%3B%0A%20%20border%2Dstyle%3A%20inset%3B%0A%20%20line%2Dheight%3A%2018px%3B%0A%20%20padding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0A%20%20border%2Dleft%2Dstyle%3A%20none%3B%0A%20%20border%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Ap%20%7B%0A%20%20margin%3A%200%2E5em%200%3B%0A%7D%0A%0Ablockquote%20%7B%0A%20%20background%2Dcolor%3A%20%23f6f6f6%3B%0A%20%20padding%3A%200%2E25em%200%2E75em%3B%0A%7D%0A%0Ahr%20%7B%0A%20%20border%2Dstyle%3A%20solid%3B%0A%20%20border%3A%20none%3B%0A%20%20border%2Dtop%3A%201px%20solid%20%23777%3B%0A%20%20margin%3A%2028px%200%3B%0A%7D%0A%0Adl%20%7B%0A%20%20margin%2Dleft%3A%200%3B%0A%7D%0A%20%20dl%20dd%20%7B%0A%20%20%20%20margin%2Dbottom%3A%2013px%3B%0A%20%20%20%20margin%2Dleft%3A%2013px%3B%0A%20%20%7D%0A%20%20dl%20dt%20%7B%0A%20%20%20%20font%2Dweight%3A%20bold%3B%0A%20%20%7D%0A%0Aul%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%7D%0A%20%20ul%20li%20%7B%0A%20%20%20%20list%2Dstyle%3A%20circle%20outside%3B%0A%20%20%7D%0A%20%20ul%20ul%20%7B%0A%20%20%20%20margin%2Dbottom%3A%200%3B%0A%20%20%7D%0A%0Apre%2C%20code%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20color%3A%20%23333%3B%0A%20%20white%2Dspace%3A%20pre%2Dwrap%3B%20%20%20%20%2F%2A%20Wrap%20long%20lines%20%2A%2F%0A%7D%0Apre%20%7B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20margin%3A%205px%200px%2010px%200px%3B%0A%20%20padding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0A%20%20background%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0A%0Acode%20%7B%0A%20%20font%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0A%20%20font%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0A%20%20padding%3A%202px%200px%3B%0A%7D%0A%0Adiv%2Efigure%20%7B%0A%20%20text%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0A%20%20background%2Dcolor%3A%20%23FFFFFF%3B%0A%20%20padding%3A%202px%3B%0A%20%20border%3A%201px%20solid%20%23DDDDDD%3B%0A%20%20border%2Dradius%3A%203px%3B%0A%20%20border%3A%201px%20solid%20%23CCCCCC%3B%0A%20%20margin%3A%200%205px%3B%0A%7D%0A%0Ah1%20%7B%0A%20%20margin%2Dtop%3A%200%3B%0A%20%20font%2Dsize%3A%2035px%3B%0A%20%20line%2Dheight%3A%2040px%3B%0A%7D%0A%0Ah2%20%7B%0A%20%20border%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20padding%2Dbottom%3A%202px%3B%0A%20%20font%2Dsize%3A%20145%25%3B%0A%7D%0A%0Ah3%20%7B%0A%20%20border%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0A%20%20padding%2Dtop%3A%2010px%3B%0A%20%20font%2Dsize%3A%20120%25%3B%0A%7D%0A%0Ah4%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0A%20%20margin%2Dleft%3A%208px%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Ah5%2C%20h6%20%7B%0A%20%20border%2Dbottom%3A%201px%20solid%20%23ccc%3B%0A%20%20font%2Dsize%3A%20105%25%3B%0A%7D%0A%0Aa%20%7B%0A%20%20color%3A%20%230033dd%3B%0A%20%20text%2Ddecoration%3A%20none%3B%0A%7D%0A%20%20a%3Ahover%20%7B%0A%20%20%20%20color%3A%20%236666ff%3B%20%7D%0A%20%20a%3Avisited%20%7B%0A%20%20%20%20color%3A%20%23800080%3B%20%7D%0A%20%20a%3Avisited%3Ahover%20%7B%0A%20%20%20%20color%3A%20%23BB00BB%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%20%20a%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0A%20%20%20%20text%2Ddecoration%3A%20underline%3B%20%7D%0A%0A%2F%2A%20Class%20described%20in%20https%3A%2F%2Fbenjeffrey%2Ecom%2Fposts%2Fpandoc%2Dsyntax%2Dhighlighting%2Dcss%0A%20%20%20Colours%20from%20https%3A%2F%2Fgist%2Egithub%2Ecom%2Frobsimmons%2F1172277%20%2A%2F%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Keyword%20%2A%2F%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%2F%2A%20DataType%20%2A%2F%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%2F%2A%20DecVal%20%28decimal%20values%29%20%2A%2F%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20BaseN%20%2A%2F%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Float%20%2A%2F%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20Char%20%2A%2F%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%2F%2A%20String%20%2A%2F%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%2F%2A%20Comment%20%2A%2F%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%2F%2A%20OtherToken%20%2A%2F%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20AlertToken%20%2A%2F%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%2F%2A%20Function%20calls%20%2A%2F%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%2F%2A%20ErrorTok%20%2A%2F%0A%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+<div class="fluid-row" id="header">
+
+
+<h1 class="title">Estimating population size from single release tag-recapture data</h1>
+<h4 class="author"><em>Paul Burch</em></h4>
+<h4 class="date"><em>18 August 2015</em></h4>
+
+</div>
+
+
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>This vignette explores using a single release tag-recapture model, generally known as the Petersen model to estimate abundance of a fish population in a lake (<span class="citation">Seber (1982)</span>). The Petersen estimator of abundance is represented by</p>
+<p><span class="math">\[ \hat{N} = \frac{n_{1}n_{2}}{m_{2}}\]</span></p>
+<p>where <span class="math">\(\hat{N}\)</span> is the estimated population numbers, <span class="math">\(n_{1}\)</span> is the number of tagged fish released in the first survey, <span class="math">\(n_{2}\)</span> is the number of fish captured on a subsequent survey and <span class="math">\(m_{2}\)</span> is the number of these that were tagged. This estimate is biased when there are a small number of recaptures (<span class="citation">Seber (1982)</span>). An adjustment proposed by <span class="citation">Chapman (1951)</span> is</p>
+<p><span class="math">\[ \hat{N} = \frac{(n_{1}+1)(n_{2}+1)}{m_{2}+1} -1\]</span>.</p>
+<p>Inferences from tagging models are based on the assumption that the tagged sample is homogeneous with the untagged population. Specifically, the sample must mix immediately with the population upon release, recaptures are independent of one another, there is no emigration or immigration all recaptured tags are reported and there is no tag loss or tag induced mortality. These assumptions are discussed in detail by <span class="citation">Schwarz and Seber (1999)</span>.</p>
+<p>We adjust the population estimate for estimated tag-induced mortality and natural mortality. The uncertainty around the population is quantified using a non-parametric bootstrap (<span class="citation">Efron and Tibshirani (1993)</span>).</p>
+</div>
+<div id="tagging-data" class="section level1">
+<h1>Tagging Data</h1>
+<p>Lake Sorell in Tasmania, Australia was infested with common carp (<em>Cyprinus carpio</em>) in the early 1990s. By 2009 efforts to eradicate carp from Lake Sorell had reduced the carp population to around 100 when a spawning event in the Austral spring of 2009/10 resulted in the recruitment of a large cohort of fish. In January 2012 a sample of 803 juvenile carp ~ 200mm were captured, double tagged with conventional, individually numbered, T-bar tags and released in two release events on the 2nd and 3rd of January 2012.</p>
+<p>The <strong>carptags</strong> dataset provides the release event (either 1 or 2), the number of tags on recaptured fish (1, 2 or NA) the date and season of recapture which are NA if the fish has yet not been recovered.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tagr)
+<span class="kw">attach</span>(carptags)
+<span class="kw">head</span>(carptags)</code></pre>
+<pre><code>##   release tags      date  season
+## 1       1    2 3/01/2012 2011/12
+## 2       1    2 3/01/2012 2011/12
+## 3       1    2 3/01/2012 2011/12
+## 4       1    2 5/01/2012 2011/12
+## 5       1    2 5/01/2012 2011/12
+## 6       1    1 5/01/2012 2011/12</code></pre>
+<div id="initial-tag-induced-mortality" class="section level2">
+<h2>Initial Tag Induced Mortality</h2>
+<p>Initial tag-induced mortality is the mortality associated with the tagging process which we assume occurs within a short period following a tags release. This parameter is difficult to estimate as it is confounded with natural mortality. In this study we use the ratio of recaptures from the two tag release events, assuming one event has zero tag-induced mortality, to estimate a lower bound for initial tag-induced mortality.</p>
+<p>The number of tag recaptures by recapture season and release event shows that tags from the first release event (2 January 2012) are under-represented in the recaptures with similar numbers of recaptures from each release group where group 1 released 488 fish while group 2 released 315.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">with</span>(carptags, <span class="kw">table</span>(season, release))</code></pre>
+<pre><code>##          release
+## season     1  2
+##   2011/12 55 53
+##   2012/13 91 90
+##   2013/14 42 40
+##   2014/15 15 20</code></pre>
+<p>We estimate the tag-induced mortality as the ratio of tags recaptured in the first six months after release assuming that there is zero tag-induced mortality in the second release group.</p>
+<p>First we extract the number of tagged carp in each release event</p>
+<pre class="sourceCode r"><code class="sourceCode r">(rel1 &lt;-<span class="st"> </span><span class="kw">nrow</span>(carptags[carptags$release==<span class="dv">1</span>,]))</code></pre>
+<pre><code>## [1] 488</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">(rel2 &lt;-<span class="st"> </span><span class="kw">nrow</span>(carptags[carptags$release==<span class="dv">2</span>,]))</code></pre>
+<pre><code>## [1] 315</code></pre>
+<p>then the recaptures by season from each release event are</p>
+<pre class="sourceCode r"><code class="sourceCode r">(recaps1 &lt;-<span class="st"> </span><span class="kw">with</span>(carptags, <span class="kw">table</span>(season, release))[,<span class="dv">1</span>])</code></pre>
+<pre><code>## 2011/12 2012/13 2013/14 2014/15 
+##      55      91      42      15</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">(recaps2 &lt;-<span class="st"> </span><span class="kw">with</span>(carptags, <span class="kw">table</span>(season, release))[,<span class="dv">2</span>])</code></pre>
+<pre><code>## 2011/12 2012/13 2013/14 2014/15 
+##      53      90      40      20</code></pre>
+<p>We observed 55 recaptures from the first release group which is very similar to the number observed from the second release event, however, there were 173 more tagged fish released in the first event. In this case we just consider the first season of recaptures, however, we obtain similar estimates if we use later seasons.</p>
+<p>The observed recapture rate of the first release group in the 2011/12 season is</p>
+<pre class="sourceCode r"><code class="sourceCode r">(rate1 &lt;-<span class="st"> </span>(recaps1[<span class="dv">1</span>]/rel1))</code></pre>
+<pre><code>##   2011/12 
+## 0.1127049</code></pre>
+<p>Compared with the second release our observed recapture rate is</p>
+<pre class="sourceCode r"><code class="sourceCode r">(rate2 &lt;-<span class="st"> </span>(recaps2[<span class="dv">1</span>]/rel2))</code></pre>
+<pre><code>##  2011/12 
+## 0.168254</code></pre>
+<p>The ratio of recaptures from the first and second release groups can provide us with an estimate of the difference in survival rates of 0.66985, or the mortality rate is 0.33015. This equates to 161.1132075 fish in the first release group dying due to the tagging process.</p>
+<p>If we make the assumption that the second release group suffered zero mortality during the tagging process then the overall rate of tag-induced mortality rate (assuming no mortality in the second release group) is</p>
+<pre class="sourceCode r"><code class="sourceCode r">(rel1 -<span class="st"> </span>(rel1 *<span class="st"> </span>(recaps1[<span class="dv">1</span>] /<span class="st"> </span>(rel1 *<span class="st"> </span>(rate2))))) /<span class="st"> </span>(rel1+rel2)</code></pre>
+<pre><code>##   2011/12 
+## 0.2006391</code></pre>
+<p>or ~ 20%. As this is a lower bound on the initial tag-induced mortality as it assumes the second release group suffered zero tagging mortality. As it is unlikely that fish released in one tagging event suffer some tag-induced mortality while those released in the other event suffer none, we also estimate population size from two scenarios assuming an 25% and 30% tag-induced mortality.</p>
+</div>
+<div id="chronic-tag-shedding" class="section level2">
+<h2>Chronic Tag Shedding</h2>
+<p>In this study all fish were double tagged so tag-shedding in this case refers to the loss of both tags. We can estimate the probability of a fish losing both tags from the proportion of fish losing one tag</p>
+<pre class="sourceCode r"><code class="sourceCode r">ls &lt;-<span class="st"> </span><span class="kw">with</span>(carptags, <span class="kw">table</span>(season, tags))
+ls_prop &lt;-<span class="st"> </span>ls[,<span class="dv">1</span>]/ls[,<span class="dv">2</span>]
+<span class="kw">cbind</span>(ls, ls_prop)</code></pre>
+<pre><code>##          1   2     ls_prop
+## 2011/12  1 107 0.009345794
+## 2012/13 13 168 0.077380952
+## 2013/14  8  74 0.108108108
+## 2014/15  1  34 0.029411765</code></pre>
+<p>In the 2012/13 season there were ~ 8% of fish were recaptured with a single tag. A simple, although biased method of estimating tag loss is to take the square of single tag loss rate, giving ~0.5% of fish losing both tags. This estimate is biased and likely over-estimates tag loss, however, it is still less than 1% per annum, consequenty tag shedding was assumed to be zero.</p>
+</div>
+<div id="chronic-tag-induced-mortality" class="section level2">
+<h2>Chronic Tag Induced Mortality</h2>
+<p>If we assume that the catchability of tagged and untagged fish is then we can estimate ongoing or chronic tag-induced mortality from changes in the ratio of tagged and untagged fish over time. In fisheris studies the mixing of tagged and untagged fish is often accounted for by excluding any recaptures in the year of release (<span class="citation">Hoenig et al. (1998)</span>). In this case, we will assume six months is a sufficient time for tagged fish to mix and not consider recaptures in 2011/12 other than to decrement the number of tagged fish in the population. As there was little fishing in the Austral winter this is probably reasonable.</p>
+<p>The total catches in the four seasons were</p>
+<pre class="sourceCode r"><code class="sourceCode r">catches &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">3181</span>, <span class="dv">4377</span>, <span class="dv">2417</span>, <span class="dv">1253</span>)</code></pre>
+<p>and the tagged catch was</p>
+<pre class="sourceCode r"><code class="sourceCode r">tagged_catch &lt;-<span class="st"> </span><span class="kw">with</span>(carptags, (<span class="kw">table</span>(season)))</code></pre>
+<p>The proportions of tagged fish in the catches each season are</p>
+<pre class="sourceCode r"><code class="sourceCode r">prop &lt;-<span class="st"> </span>tagged_catch/catches</code></pre>
+<p>The estimate of the chronic tag-induced mortality from 2012/13 to 2013/14 is</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="dv">1</span> -<span class="st"> </span>(prop[<span class="dv">3</span>] /<span class="st"> </span>prop[<span class="dv">2</span>])</code></pre>
+<pre><code>##  2013/14 
+## 0.179582</code></pre>
+<p>and the estimate from 2013/14 to 2014/15 is</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="dv">1</span> -<span class="st"> </span>(prop[<span class="dv">4</span>] /<span class="st"> </span>prop[<span class="dv">3</span>])</code></pre>
+<pre><code>##   2014/15 
+## 0.1766589</code></pre>
+<p>We assume a tag-induced mortality rate of 17%.</p>
+</div>
+<div id="natural-mortality" class="section level2">
+<h2>Natural Mortality</h2>
+<p>Natural mortality is defined as the mortality from all sources other than fishing. For carp in the adjacent Lake Crescent, annual natural mortality was estimated by <span class="citation">Donkers et al. (2012)</span> to be ~4%. While this estimate is low compared with estimates of ~20% and 26% for males and females in the Murray River (<span class="citation">Brown et al. (2005)</span>) the conservative estimate of 4% annual natural mortality was used in this analysis.</p>
+</div>
+</div>
+<div id="population-estimate" class="section level1">
+<h1>Population Estimate</h1>
+<p>We estimate population size and quantify the uncertainty of the estimate by bootstrapping the hauls (<span class="citation">Efron and Tibshirani (1993)</span>) with confidence intervals obtained bootstrap samples using the percentile method.</p>
+<p>The <strong>carphauls</strong> dataset contains the total number of carp and the number that were tagged from daily fishing in the 2014/15 season.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">attach</span>(carphauls)
+<span class="kw">head</span>(carphauls)</code></pre>
+<pre><code>##   day catch tagged
+## 1  17     0      0
+## 2  24     4      0
+## 3  38     0      0
+## 4  39     4      0
+## 5  43     0      0
+## 6  44     1      0</code></pre>
+<p>We need to provide the recaptures of tags over previous seasons</p>
+<pre class="sourceCode r"><code class="sourceCode r">(prior_recaps &lt;-<span class="st"> </span>recaps1[<span class="dv">1</span>:<span class="dv">3</span>] +<span class="st"> </span>recaps2[<span class="dv">1</span>:<span class="dv">3</span>])</code></pre>
+<pre><code>## 2011/12 2012/13 2013/14 
+##     108     181      82</code></pre>
+<p>and the recaptures in the current season from the tagging data were</p>
+<pre class="sourceCode r"><code class="sourceCode r">(recaps &lt;-<span class="st"> </span>recaps1[<span class="dv">4</span>] +<span class="st"> </span>recaps2[<span class="dv">4</span>])</code></pre>
+<pre><code>## 2014/15 
+##      35</code></pre>
+<pre class="sourceCode r"><code class="sourceCode r">recaps</code></pre>
+<pre><code>## 2014/15 
+##      35</code></pre>
+<p>which should match the number of tags from the haul data</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sum</span>(carphauls$tagged)</code></pre>
+<pre><code>## [1] 35</code></pre>
+<p>We then have the number of tags recaptured up until the current season (2014/15) is 371. There were 35 tags recaptured in 2014/15 out of a total catch of 1253carp.</p>
+<p>This data is used to evaluate three scenarios of tag-induced mortality, 20%, 25% and 30%.</p>
+<div id="tag-induced-mortality" class="section level2">
+<h2>20% Tag induced mortality</h2>
+<p>We set a random number seed for repeatability.</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">set.seed</span>(<span class="dv">15</span>)</code></pre>
+<p>This scenario used the estimated lower bound of tag induced mortality of 20% determined by applying the 34% mortality observed in the 1st release group across all released tags.</p>
+<pre class="sourceCode r"><code class="sourceCode r">est_1 &lt;-<span class="st"> </span><span class="kw">single_release</span>(<span class="dt">tags =</span> (rel1 +<span class="st"> </span>rel2),
+                        <span class="dt">catch =</span> carphauls$catch,
+                        <span class="dt">recaps =</span> carphauls$tagged,
+                        <span class="dt">prior_recaps =</span> prior_recaps,
+                        <span class="dt">method =</span> <span class="st">&quot;Chapman&quot;</span>,
+                        <span class="dt">unit =</span> <span class="st">&quot;numbers&quot;</span>,
+                        <span class="dt">type =</span> <span class="dv">2</span>,
+                        <span class="dt">tag_mort =</span> <span class="fl">0.2</span>,
+                        <span class="dt">nat_mort =</span> <span class="fl">0.04</span>,
+                        <span class="dt">chronic_mort =</span> <span class="fl">0.17</span>)
+
+<span class="kw">summary</span>(est_1)</code></pre>
+<pre><code>## Chapman estimate of numbers 
+##      N_hat      var_N 
+##   3300.773 177491.285 
+## With cv 0.1276359 
+## 803 tags were released and 371 were subsequently recaptured prior to this season 
+## 1253 numbers were captured in the current survey and 35 were tagged 
+## The following parameters were specified 
+## Initial tag-induced mortality = 0.2 
+## Tag reporting rates by season = 1 1 1 
+## Natural mortality by season = 0.04 0.04 0.04 
+## Chronic tag shedding by season = 0 0 0 
+## Chronic tag-induced mortality by season = 0.17 0.17 0.17</code></pre>
+<p>The uncertainty is obtained using the <strong>bootstrap</strong> method.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ci_1 &lt;-<span class="st"> </span><span class="kw">bootstrap</span>(est_1, <span class="dt">nboot=</span><span class="dv">1000</span>)
+<span class="kw">summary</span>(ci_1)</code></pre>
+<pre><code>## Chapman estimate of numbers 
+## 803 tags were released and 0 were subsequently recaptured in previous seasons 
+## 1253 numbers were captured in the current survey and  35  were tagged 
+## The following parameters were specified 
+## Initial tag-induced mortality = 0.2 
+## Tag reporting rates by season = 1 1 1 
+## Natural mortality by season = 0.04 0.04 0.04 
+## Chronic tag shedding by season = 0 0 0 
+## Chronic tag-induced mortality by season = 0.17 0.17 0.17</code></pre>
+<pre><code>##        N_hat      boot_SE      boot_CV         2.5%          50% 
+## 3300.7729489  693.2355061    0.2100222 2333.1384834 3312.0562500 
+##        97.5% 
+## 5017.7152273</code></pre>
+</div>
+<div id="tag-induced-mortality-1" class="section level2">
+<h2>25% Tag induced mortality</h2>
+<p>This scenario assumed an intial tag induced mortality of 25%.</p>
+<pre class="sourceCode r"><code class="sourceCode r">est_2 &lt;-<span class="st"> </span><span class="kw">single_release</span>(<span class="dt">tags =</span> (rel1 +<span class="st"> </span>rel2),
+                        <span class="dt">catch =</span> carphauls$catch,
+                        <span class="dt">recaps =</span> carphauls$tagged,
+                        <span class="dt">prior_recaps =</span> prior_recaps,
+                        <span class="dt">method =</span> <span class="st">&quot;Chapman&quot;</span>,
+                        <span class="dt">unit =</span> <span class="st">&quot;numbers&quot;</span>,
+                        <span class="dt">type =</span> <span class="dv">2</span>,
+                        <span class="dt">tag_mort =</span> <span class="fl">0.25</span>,
+                        <span class="dt">nat_mort =</span> <span class="fl">0.04</span>,
+                        <span class="dt">chronic_mort =</span> <span class="fl">0.17</span>)
+
+<span class="kw">summary</span>(est_2)</code></pre>
+<pre><code>## Chapman estimate of numbers 
+##      N_hat      var_N 
+##   2705.928 103244.912 
+## With cv 0.1187458 
+## 803 tags were released and 371 were subsequently recaptured prior to this season 
+## 1253 numbers were captured in the current survey and 35 were tagged 
+## The following parameters were specified 
+## Initial tag-induced mortality = 0.25 
+## Tag reporting rates by season = 1 1 1 
+## Natural mortality by season = 0.04 0.04 0.04 
+## Chronic tag shedding by season = 0 0 0 
+## Chronic tag-induced mortality by season = 0.17 0.17 0.17</code></pre>
+<p>Again we estimate the uncertainty using the <strong>bootstrap</strong> method.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ci_2 &lt;-<span class="st"> </span><span class="kw">bootstrap</span>(est_2, <span class="dt">nboot=</span><span class="dv">1000</span>)
+<span class="kw">summary</span>(ci_2)</code></pre>
+<pre><code>## Chapman estimate of numbers 
+## 803 tags were released and 0 were subsequently recaptured in previous seasons 
+## 1253 numbers were captured in the current survey and  35  were tagged 
+## The following parameters were specified 
+## Initial tag-induced mortality = 0.25 
+## Tag reporting rates by season = 1 1 1 
+## Natural mortality by season = 0.04 0.04 0.04 
+## Chronic tag shedding by season = 0 0 0 
+## Chronic tag-induced mortality by season = 0.17 0.17 0.17</code></pre>
+<pre><code>##        N_hat      boot_SE      boot_CV         2.5%          50% 
+## 2705.9276395  621.7795391    0.2297842 1795.4786545 2685.5111288 
+##        97.5% 
+## 4266.8720238</code></pre>
+</div>
+<div id="tag-induced-mortality-2" class="section level2">
+<h2>30% Tag induced mortality</h2>
+<pre class="sourceCode r"><code class="sourceCode r">est_3 &lt;-<span class="st"> </span><span class="kw">single_release</span>(<span class="dt">tags =</span> (rel1 +<span class="st"> </span>rel2),
+                        <span class="dt">catch =</span> carphauls$catch,
+                        <span class="dt">recaps =</span> carphauls$tagged,
+                        <span class="dt">prior_recaps =</span> prior_recaps,
+                        <span class="dt">method =</span> <span class="st">&quot;Chapman&quot;</span>,
+                        <span class="dt">unit =</span> <span class="st">&quot;numbers&quot;</span>,
+                        <span class="dt">type =</span> <span class="dv">2</span>,
+                        <span class="dt">tag_mort =</span> <span class="fl">0.3</span>,
+                        <span class="dt">nat_mort =</span> <span class="fl">0.04</span>,
+                        <span class="dt">chronic_mort =</span> <span class="fl">0.17</span>)
+
+<span class="kw">summary</span>(est_3)</code></pre>
+<pre><code>## Chapman estimate of numbers 
+##     N_hat     var_N 
+##  2140.093 49860.072 
+## With cv 0.1043383 
+## 803 tags were released and 371 were subsequently recaptured prior to this season 
+## 1253 numbers were captured in the current survey and 35 were tagged 
+## The following parameters were specified 
+## Initial tag-induced mortality = 0.3 
+## Tag reporting rates by season = 1 1 1 
+## Natural mortality by season = 0.04 0.04 0.04 
+## Chronic tag shedding by season = 0 0 0 
+## Chronic tag-induced mortality by season = 0.17 0.17 0.17</code></pre>
+<p>Again we estimate the uncertainty using the <strong>bootstrap</strong> method.</p>
+<pre class="sourceCode r"><code class="sourceCode r">ci_3 &lt;-<span class="st"> </span><span class="kw">bootstrap</span>(est_3, <span class="dt">nboot=</span><span class="dv">1000</span>)
+<span class="kw">summary</span>(ci_3)</code></pre>
+<pre><code>## Chapman estimate of numbers 
+## 803 tags were released and 0 were subsequently recaptured in previous seasons 
+## 1253 numbers were captured in the current survey and  35  were tagged 
+## The following parameters were specified 
+## Initial tag-induced mortality = 0.3 
+## Tag reporting rates by season = 1 1 1 
+## Natural mortality by season = 0.04 0.04 0.04 
+## Chronic tag shedding by season = 0 0 0 
+## Chronic tag-induced mortality by season = 0.17 0.17 0.17</code></pre>
+<pre><code>##        N_hat      boot_SE      boot_CV         2.5%          50% 
+## 2140.0932781  522.2653956    0.2440386 1432.9609738 2173.8250000 
+##        97.5% 
+## 3438.7740927</code></pre>
+</div>
+</div>
+<div id="discussion" class="section level1">
+<h1>Discussion</h1>
+<p>We provide Chapman/Petersen estimates of the population size of common carp in Lake Sorell at 30 June 2015 from three scenarios of initial tag-induced mortality (20%, 25% and 30%) along with the 95% confidence intervals obtained using a bootstrap. These estimates are based on the catches of carp in the 2014/15 season and account for assumed annual natural mortality rate of 4% (<span class="citation">Donkers et al. (2012)</span>) and an estimated ongoing (chronic) tag-induced mortality of 17%. We estimated the lower bound on initial tag-induced mortality to be 20% from the ratio of recaptures from the two release groups, assuming the second release group suffered zero tag-induced mortality. Scenarios assuming 25% and 30% tag-induced mortality provide plausable estimates of the population size if we assume the second release group does suffer some tagging mortality.</p>
+</div>
+<div id="session-information" class="section level1">
+<h1>Session Information</h1>
+<p>This vignette was created using Rmarkdown and the following R packages</p>
+<pre class="sourceCode r"><code class="sourceCode r"><span class="kw">sessionInfo</span>()</code></pre>
+<pre><code>## R version 3.2.4 Revised (2016-03-16 r70336)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 7 x64 (build 7601) Service Pack 1
+## 
+## locale:
+## [1] LC_COLLATE=C                       LC_CTYPE=English_Australia.1252   
+## [3] LC_MONETARY=English_Australia.1252 LC_NUMERIC=C                      
+## [5] LC_TIME=English_Australia.1252    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+## [1] tagr_0.0.14
+## 
+## loaded via a namespace (and not attached):
+##  [1] magrittr_1.5    formatR_1.3     htmltools_0.3   tools_3.2.4    
+##  [5] withr_1.0.1     yaml_2.1.13     roxygen2_5.0.1  Rcpp_0.12.3    
+##  [9] memoise_1.0.0   rmarkdown_0.9.5 stringi_1.0-1   knitr_1.12.3   
+## [13] stringr_1.0.0   digest_0.6.9    devtools_1.10.0 evaluate_0.8.3</code></pre>
+<div class="references">
+<h1>References</h1>
+<p>Brown, Paul, K P Sivakumaran, Daniel Stoessel, and Annie Giles. 2005. “Population biology of carp (<em>Cyprinus carpio</em> L.) in the mid-Murray River and Barmah Forest Wetlands, Australia.” <em>Marine and Freshwater Research</em> 56 (8). CSIRO: 1151–64.</p>
+<p>Chapman, Douglas George. 1951. “Some Properties of the Hypergeometric Distribution with Applications to Zoological Sample Censuses.” <em>University of California Publications in Statistics</em> 1 (7). University of California Press: 131–60.</p>
+<p>Donkers, P, J G Patil, C Wisniewski, and J E Diggle. 2012. “Validation of mark-recapture population estimates for invasive common carp, <em>Cyprinus carpio</em>, in Lake Crescent, Tasmania.” <em>Journal of Applied Ichthyology</em> 28 (1): 7–14.</p>
+<p>Efron, B, and R. J. Tibshirani. 1993. <em>An Introduction to the Bootstrap</em>. Monographs on Statistics and Applied Probability. Chapman; Hall.</p>
+<p>Hoenig, John M., Nicholas J. Barrowman, Kenneth H. Pollock, Elizabeth N. Brooks, William S. Hearn, and Thomas Polacheck. 1998. “Models for Tagging Data That Allow for Incomplete Mixing of Newly Tagged Animals.” <em>Canadian Journal of Fisheries and Aquatic Sciences</em> 55 (6): 1477–83.</p>
+<p>Schwarz, C. J., and G. A. F. Seber. 1999. “Estimating animal abundance: Review III.” <em>Statistical Science</em> 14 (4): 427–56.</p>
+<p>Seber, G. A. F. 1982. <em>The Estimation of Animal Abundance and Related Parameters</em>. Second Edition. Blackburn Press.</p>
+</div>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
