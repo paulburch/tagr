@@ -1,4 +1,8 @@
-CHANGES in tagr DEV VERSION 0.0.14
+CHANGES in tagr VERSION 0.0.15
+
+o update of documentation
+
+CHANGES in tagr VERSION 0.0.14
 
 o ilogit transformation functions moved to 'tagsurviv' package
 
@@ -6,19 +10,23 @@ o upgrade to roxygen2 version 5.0
 
 CHANGES in tagr VERSION 0.0.13
 
-o correction to chapman_n, was adding 1 rather than subtracting 1 (thanks to Kenji Taki)
+o correction to chapman_n, was adding 1 rather than subtracting 1 
+(thanks to Kenji Taki)
 
 o inst/doc folder with vignette added to github
 
 CHANGES in tagr VERSION 0.0.11
 
-o adding the option of including the mean weight of a single fish to chapman_wt and associated functions
+o adding the option of including the mean weight of a single fish to
+chapman_wt and associated functions
 
 o correcting a minor error in chapman_wt variance
 
-o added option to specify the quantiles probabilities for summary.bsamples method
+o added option to specify the quantiles probabilities for summary.bsamples
+method
 
-o added bootstrapped standard error and coefficient of variation to summary.bsamples method
+o added bootstrapped standard error and coefficient of variation to 
+summary.bsamples method
 
 o added coefficient of variation to summary.srelease
 
@@ -30,6 +38,8 @@ o uploaded to Github https://github.com/paulburch/tagr
 
 CHANGES in tagr VERSION 0.0.7
 
-o variance now calculated for "Chapman" method of single_release when catch is in weight
+o variance now calculated for "Chapman" method of single_release when
+catch is in weight
 
-o improvments to documentation for single_release bootstrap method and the package
+o improvments to documentation for single_release bootstrap method and 
+the package
