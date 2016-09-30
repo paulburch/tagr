@@ -18,7 +18,7 @@ $$ \hat{N} = \frac{n_{1}n_{2}}{m_{2}}$$
 
 where $\hat{N}$ is the estimated population numbers, $n_{1}$ is the number of tagged fish released in the first survey, $n_{2}$ is the number of fish captured on a subsequent survey and $m_{2}$ is the number of these that were tagged. This estimate is biased when there are a small number of recaptures (@Seber1982abundance). An adjustment proposed by @Chapman1951properties is
 
-$$ \hat{N} = \frac{(n_{1}+1)(n_{2}+1)}{m_{2}+1} -1$$.
+$$ \hat{N} = \frac{(n_{1}+1)(n_{2}+1)}{m_{2}+1} -1.$$
 
 Inferences from tagging models are based on the assumption that the tagged sample is homogeneous with the untagged population. Specifically, the sample must mix immediately with the population upon release, recaptures are independent of one another, there is no emigration or immigration all recaptured tags are reported and there is no tag loss or tag induced mortality. These assumptions are discussed in detail by @Schwarz1999abundance.
 
