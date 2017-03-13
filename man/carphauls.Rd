@@ -18,4 +18,3 @@ A dataset containing fishing events for carp in Lake
 Sorell. The variables are as follows:
 }
 \keyword{datasets}
-

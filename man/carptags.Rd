@@ -20,4 +20,3 @@ released in January 2012. All fish were double tagged with T-bar tags.
 The variables are as follows:
 }
 \keyword{datasets}
-

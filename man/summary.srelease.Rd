@@ -15,4 +15,3 @@
 S3 method for single release, single recapture models 
 tag recapture models of abundance
 }
-

@@ -3,6 +3,7 @@
 \name{bootstrap}
 \alias{bootstrap}
 \alias{bootstrap.srelease}
+\alias{bootstrap.srelease}
 \title{Bootstrap method for single release tag-return studies}
 \usage{
 bootstrap(x, nboot, ...)
@@ -25,4 +26,3 @@ incoporates uncertainty in tag-induced mortality, natural mortality and tag
 shedding as a series of Bernoulli trials. @seealso \code{\link{single_release}} for 
 more details.
 }
-

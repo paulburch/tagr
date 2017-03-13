@@ -5,6 +5,9 @@
 \alias{chapman_wt}
 \alias{petersen}
 \alias{single_release}
+\alias{chapman_n}
+\alias{chapman_wt}
+\alias{petersen}
 \title{Single tag release estimate of population size}
 \usage{
 chapman_n(tags, catch, recaps)
@@ -96,4 +99,3 @@ summary(boot_fit)
 
 ## End(Not run)
 }
-

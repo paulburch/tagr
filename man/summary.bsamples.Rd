@@ -17,4 +17,3 @@
 Calculate bootstrapped confidence intervals for object of
 class bsamples
 }
-
