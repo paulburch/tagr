@@ -148,16 +148,21 @@ petersen <- function(tags, catch, recaps){
 #' 4) The remaining within season recaptures divided by the tag reporting rate are removed 
 #' 
 #' 5) The remaining natural mortality and chronic tag loss and tag-induced mortality is applied.
-#' @param tags number of marked animals released (note these must be whole numbers for the bootstrap to work)
-#' @param catch vector of the number or weight of animals captured and checked for tags by haul on the second survey
+#' @param tags number of marked animals released (note these must be whole 
+#' numbers for the bootstrap to work)
+#' @param catch vector of the number or weight of animals captured and checked 
+#' for tags by haul on the second survey
 #' @param recaps vector of number of marked animals recaptured by haul
-#' @param mean_wt mean weight of a single fish (optional argument for Chapman weight method)
-#' @param prior_recaps vector of subsequent recaptures (first year this represents within season recaptures)
+#' @param mean_wt mean weight of a single fish (optional argument for Chapman
+#'  weight method)
+#' @param prior_recaps vector of subsequent recaptures (first year this 
+#' represents within season recaptures)
 #' @param method method
 #' @param unit measurement unit (numbers, kg, tonnes)
-#' @param type do we assume fishing occurs over a short period (Ricker type 1) or
-#' is extended over the year and competes with natural mortality and tag sheddding (Ricker type 2) 
-#' @param tag_mort intitial tag-induced mortality
+#' @param type do we assume fishing occurs over a short period (Ricker type 1) 
+#' or is extended over the year and competes with natural mortality and tag
+#' sheddding (Ricker type 2) 
+#' @param tag_mort initial tag-induced mortality
 #' @param reporting vector of tag reporting rate
 #' @param nat_mort vector of natural mortality (instantaneous)
 #' @param chronic_shed vector of chronic (ongoing) tag shedding
@@ -166,18 +171,22 @@ petersen <- function(tags, catch, recaps){
 #' @export
 #' @examples 
 #' ## Chapman estimates of population numbers
-#' single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1, unit="numbers")
-#' single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1, unit="numbers",
-#'                tag_mort=0.1)
-#' single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1, unit="numbers",
-#'                tag_mort=0.1, reporting=0.8) 
+#' single_release(tags=100, catch=200, recaps=5, method="Chapman",
+#'                type=1, unit="numbers")
+#' single_release(tags=100, catch=200, recaps=5, method="Chapman", 
+#'                type=1, unit="numbers", tag_mort=0.1)
+#' single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1,
+#'                unit="numbers", tag_mort=0.1, reporting=0.8) 
 #' 
 #' ## Chapman estimate of the population size of carp in a lake
 #' ## Load the carphauls data
 #' attach(carphauls)
-#' fit <- single_release(tags = 803, catch = carphauls$catch, recaps = carphauls$tagged, 
-#'                       prior_recaps = c(108, 181, 82), method = "Chapman", unit = "numbers",
-#'                       type = 2, tag_mort = 0.3, nat_mort = 0.04, chronic_mort = 0.17)
+#' fit <- single_release(tags = 803, catch = carphauls$catch, 
+#'                       recaps = carphauls$tagged, 
+#'                       prior_recaps = c(108, 181, 82), 
+#'                       method = "Chapman", unit = "numbers",
+#'                       type = 2, tag_mort = 0.3, nat_mort = 0.04, 
+#'                       chronic_mort = 0.17)
 #' summary(fit)
 #' 
 #' ## Not run: 
@@ -189,13 +198,18 @@ petersen <- function(tags, catch, recaps){
 #' summary(boot_fit)
 #' 
 #' ## End(Not run)
-single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0, method, unit, type, tag_mort=0, reporting=1, nat_mort=0, chronic_shed=0, chronic_mort=0)  {
+single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0, 
+                           method, unit, type, tag_mort=0, reporting=1, 
+                           nat_mort=0, chronic_shed=0, chronic_mort=0)  {
   ## check the releases are > recaptures
-  if((sum(recaps)+sum(prior_recaps)) > tags) stop("more tagged individuals have been recaptured than were released")
+  if((sum(recaps)+sum(prior_recaps)) > tags) 
+    stop("more tagged individuals have been recaptured than were released")
   ## check the method
-  if(!method %in% c("Petersen", "Chapman")) stop("incorrect method, currently 'Petersen' and 'Chapman' are implemented")
+  if(!method %in% c("Petersen", "Chapman")) 
+    stop("incorrect method, currently 'Petersen' and 'Chapman' are implemented")
   ## check units
-  if(!unit %in% c("numbers", "kg", "tonnes")) stop("incorrect units must be numbers, kg or tonnes")
+  if(!unit %in% c("numbers", "kg", "tonnes")) 
+    stop("incorrect units must be numbers, kg or tonnes")
   ## so we expect to have more than one
   if(length(catch) != length(recaps)) stop("catch and recaptures must be of the same length")
   ## more checks as they come to mind
