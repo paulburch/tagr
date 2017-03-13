@@ -51,7 +51,7 @@ check_srelease_inputs <- function(tags, catch, recaps){
   ## if there are no recaptures we don't estimate population size, or alternately it could be infinity
   if(recaps==0){
     check <- FALSE
-    warning("there are zero recapures population size not estimates")
+    warning("there are zero recapures population size not estimated")
     ## now check that the adjusted releases are > 0
   }
   if(tags <= 0){
