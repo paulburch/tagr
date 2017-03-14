@@ -21,24 +21,29 @@ single_release(tags, catch, recaps, mean_wt = 0, prior_recaps = 0, method,
   chronic_shed = 0, chronic_mort = 0)
 }
 \arguments{
-\item{tags}{number of marked animals released (note these must be whole numbers for the bootstrap to work)}
+\item{tags}{number of marked animals released (note these must be whole 
+numbers for the bootstrap to work)}
 
-\item{catch}{vector of the number or weight of animals captured and checked for tags by haul on the second survey}
+\item{catch}{vector of the number or weight of animals captured and checked 
+for tags by haul on the second survey}
 
 \item{recaps}{vector of number of marked animals recaptured by haul}
 
-\item{mean_wt}{mean weight of a single fish (optional argument for Chapman weight method)}
+\item{mean_wt}{mean weight of a single fish (optional argument for Chapman
+weight method)}
 
-\item{prior_recaps}{vector of subsequent recaptures (first year this represents within season recaptures)}
+\item{prior_recaps}{vector of subsequent recaptures (first year this 
+represents within season recaptures)}
 
 \item{method}{method}
 
 \item{unit}{measurement unit (numbers, kg, tonnes)}
 
-\item{type}{do we assume fishing occurs over a short period (Ricker type 1) or
-is extended over the year and competes with natural mortality and tag sheddding (Ricker type 2)}
+\item{type}{do we assume fishing occurs over a short period (Ricker type 1) 
+or is extended over the year and competes with natural mortality and tag
+sheddding (Ricker type 2)}
 
-\item{tag_mort}{intitial tag-induced mortality}
+\item{tag_mort}{initial tag-induced mortality}
 
 \item{reporting}{vector of tag reporting rate}
 
@@ -75,18 +80,22 @@ competed to deplete the tagged population. The adjusted releases are calculated 
 }
 \examples{
 ## Chapman estimates of population numbers
-single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1, unit="numbers")
-single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1, unit="numbers",
-               tag_mort=0.1)
-single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1, unit="numbers",
-               tag_mort=0.1, reporting=0.8) 
+single_release(tags=100, catch=200, recaps=5, method="Chapman",
+               type=1, unit="numbers")
+single_release(tags=100, catch=200, recaps=5, method="Chapman", 
+               type=1, unit="numbers", tag_mort=0.1)
+single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1,
+               unit="numbers", tag_mort=0.1, reporting=0.8) 
 
 ## Chapman estimate of the population size of carp in a lake
 ## Load the carphauls data
 attach(carphauls)
-fit <- single_release(tags = 803, catch = carphauls$catch, recaps = carphauls$tagged, 
-                      prior_recaps = c(108, 181, 82), method = "Chapman", unit = "numbers",
-                      type = 2, tag_mort = 0.3, nat_mort = 0.04, chronic_mort = 0.17)
+fit <- single_release(tags = 803, catch = carphauls$catch, 
+                      recaps = carphauls$tagged, 
+                      prior_recaps = c(108, 181, 82), 
+                      method = "Chapman", unit = "numbers",
+                      type = 2, tag_mort = 0.3, nat_mort = 0.04, 
+                      chronic_mort = 0.17)
 summary(fit)
 
 ## Not run: 
