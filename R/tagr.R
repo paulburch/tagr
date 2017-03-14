@@ -44,3 +44,33 @@ NULL
 #'   \item season: season (July to June) of recapture, NA denotes fish still at liberty
 #' }
 "carptags"
+
+#' Parameters for specifying multiple release tag model
+#' 
+#' Parameters for specifying multiple release tag model
+#' 
+#' A list that specifies the following parameters. Mixture of text, integer and
+#' vectors. 
+#' 
+#' @seealso \code{\link{multi_release}} for more details.
+#' 
+#' 
+#' @param mean_wt mean weight of a single fish (optional argument for Chapman 
+#' weight method)
+#' @param method The method to use for calculating population size (options are
+#' "Petersen" or "Chapman")
+#' @param unit the unit of measurement (either "numbers", "kg" or "tonnes")
+#' @param type does fishing occur over a short period (Ricker type 1) or is
+#' extended over the year and competes with natural mortality and tag sheddding
+#' (Ricker type 2) 
+#' @param tag_mort vector of initial tag-induced mortality
+#' @param reporting vector of annual tag reporting rates
+#' @param nat_mort vector of natural mortality (instantaneous)
+#' @param chronic_shed vector of chronic (ongoing) tag shedding
+#' @param chronic_mort vector of chronic (ongoing) tag-induced mortality
+#' @name pars
+NULL
+#> NULL
+
+
+
