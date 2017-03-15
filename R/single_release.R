@@ -64,66 +64,6 @@ check_srelease_inputs <- function(tags, catch, recaps){
 }
 
 
-#' @export
-#' @rdname single_release
-chapman_n <- function(tags, catch, recaps){
-  ## check function inputs
-  check <- check_srelease_inputs(tags, catch, recaps)
-  ## if check passes calculate population size
-  if(check){
-    ## calculate the estimate
-    N_hat <- (((tags + 1)*(catch + 1))/(recaps + 1)) - 1 
-    ## calculate the variance
-    var_N <- ((tags + 1)*(catch + 1)*(tags - recaps)*(catch - recaps))/
-      (((recaps + 1)^2)*(recaps + 2))
-    obj <- c(N_hat, var_N)
-  }else{
-    obj <- c(NA, NA)
-  }
-  names(obj) <- c("N_hat", "var_N")
-  obj
-}
-
-#' @export
-#' @rdname single_release
-chapman_wt <- function(tags, catch, recaps, mean_wt=0){
-  ## check function inputs
-  check <- check_srelease_inputs(tags, catch, recaps)
-  ## if check passes calculate population size
-  if(check){
-    ## calculate the estimate
-    N_hat <- (((tags + 1)*(catch + mean_wt))/(recaps + 1)) - mean_wt
-    ## calculate the variance
-    var_N <- ((tags + 1)*(catch + mean_wt)*(tags - recaps)*(catch - mean_wt*recaps))/
-      (((recaps + 1)^2)*(recaps + 2))
-    obj <- c(N_hat, var_N)
-    }else{
-    obj <- c(NA, NA)
-    }
-  names(obj) <- c("N_hat", "var_N")
-  obj
-}
-
-#' @export
-#' @rdname single_release
-petersen <- function(tags, catch, recaps){
-  ## check function inputs
-  check <- check_srelease_inputs(tags, catch, recaps)
-  ## if check passes calculate population size
-  if(check){
-    ## calculate the estimate
-    N_hat <- tags * catch / recaps 
-    ## variance from Ricker 1975
-    var_N <- (tags^2) * catch * (catch - recaps) / recaps^3 
-    ## return the estimate and variance
-    obj <- c(N_hat, var_N)
-    }else{
-      obj <- c(NA, NA)
-      }
-  names(obj) <- c("N_hat", "var_N")
-  obj
-}
-
 #' Single tag release estimate of population size
 #' 
 #' Estimate population size from single release tag data
