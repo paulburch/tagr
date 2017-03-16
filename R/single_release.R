@@ -76,18 +76,23 @@ check_srelease_inputs <- function(tags, catch, recaps){
 #' 
 #' 3) Natural mortality and chronic tag loss and tag-induced mortality is applied.
 #' 
-#' For a fishery that operates throughout the year (Ricker Type 2) fishing and natural mortality
-#' competed to deplete the tagged population. The adjusted releases are calculated as follows
+#' For a fishery that operates throughout the year (Ricker Type 2) fishing and 
+#' natural mortality competed to deplete the tagged population. The adjusted 
+#' releases are calculated as follows
 #' 
 #' 1) Initial tag-induced mortality is applied
 #' 
-#' 2) Half of the within season recaptures divided by the tag reporting rate are removed 
+#' 2) Half of the within season recaptures divided by the tag reporting rate are
+#' removed 
 #' 
-#' 3) Half of the natural mortality and chronic tag loss and tag-induced mortality is applied
+#' 3) Half of the natural mortality and chronic tag loss and tag-induced 
+#' mortality is applied
 #' 
-#' 4) The remaining within season recaptures divided by the tag reporting rate are removed 
+#' 4) The remaining within season recaptures divided by the tag reporting rate 
+#' are removed 
 #' 
-#' 5) The remaining natural mortality and chronic tag loss and tag-induced mortality is applied.
+#' 5) The remaining natural mortality and chronic tag loss and tag-induced 
+#' mortality is applied.
 #' @param tags number of marked animals released (note these must be whole 
 #' numbers for the bootstrap to work)
 #' @param catch vector of the number or weight of animals captured and checked 
@@ -244,23 +249,6 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
 ## ************************************************ ##
 ## S3 Generics
 
-
-#' Bootstrap method for single release tag-return studies
-#'
-#' Bootstrap method for single release tag-return studies
-#' 
-#' Estimate confidence intervals using a non-parametric bootstrap. This method
-#' incoporates uncertainty in tag-induced mortality, natural mortality and tag 
-#' shedding as a series of Bernoulli trials. @seealso \code{\link{single_release}} for 
-#' more details.
-#' @param x an object of class srelease
-#' @param nboot number of bootstrap samples
-#' @param ... additional parameters
-#' @aliases bootstrap.srelease
-#' @export
-bootstrap <- function(x, nboot, ...)
-  UseMethod("bootstrap")
-
 #' @export
 #' @rdname bootstrap
 bootstrap.srelease <- function(x, nboot, ...){
@@ -335,7 +323,6 @@ bootstrap.srelease <- function(x, nboot, ...){
   return(obj)
 }
 
-
 #' Print method for single release, single recapture models
 #'
 #' S3 method for single release, single recapture models 
@@ -373,7 +360,6 @@ summary.srelease <- function(object, ...){
   cat("Chronic tag-induced mortality by season =", x$ChronicMort, "\n")
 }
 
-
 #' S3 method for bootstrapped confidence intervals
 #'
 #' Calculate bootstrapped confidence intervals for object of
@@ -405,6 +391,3 @@ summary.bsamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
   #names(out) <- c("Estimate", "lower", "upper")
   out
 }
-
-
-
