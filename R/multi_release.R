@@ -184,26 +184,26 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   ## cohort tags
   n_years <- nrow(hauls)-1
   ## adjust the recaptures by cohort by reporting rate in the last year
-  recaps_cohort <- colSums(hauls[,-1]) / pars[["reporting"]][n_years]
+  recap_cohort <- colSums(hauls[,-1]) / pars[["reporting"]][n_years]
   ## the catch (numbers) is the total number of fish 
   catch <- sum(hauls)
   ## define storage for the cohort estimates
   ##* what is recs???
   cohort_est <- rep(NA, nrow(recs))
   ## then calculate population size based on the method 
-  if(method=="Petersen"){
+  if(pars[["method"]]=="Petersen"){
     ## Petersen population estimate overall and by cohort
     est <- petersen(sum(avail_tags), catch, sum(recap_cohort))
     for(i in 1:nrow(recs)){
       cohort_est[i] <- petersen(avail_tags[i], catch, recap_cohort[i])
     }
-  }else if(method=="Chapman" & unit %in% c("numbers")){
+  }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("numbers")){
     ## Chapman population estimate overall and by cohort
     est <- chapman_n(sum(avail_tags), catch, sum(recap_cohort))
     for(i in 1:nrow(recs)){
       cohort_est[i] <- chapman_n(avail_tags[i], catch, recap_cohort[i])
     }
-  }else if(method=="Chapman" & unit %in% c("kg", "tonnes")){
+  }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("kg", "tonnes")){
     ## Chapman weight
     est <- chapman_wt(sum(avail_tags), catch, sum(recap_cohort), pars[["mean_wt"]])
     for(i in 1:nrow(recs)){

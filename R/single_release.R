@@ -84,7 +84,6 @@ check_srelease_inputs <- function(tags, catch, recaps){
 #' @param nat_mort vector of natural mortality (instantaneous)
 #' @param chronic_shed vector of chronic (ongoing) tag shedding
 #' @param chronic_mort vector of chronic (ongoing) tag-induced mortality
-#' @aliases chapman_n chapman_wt petersen
 #' @export
 #' @examples 
 #' ## Chapman estimates of population numbers
