@@ -31,7 +31,7 @@ Parameters for specifying multiple release tag model
 }
 \details{
 A list that specifies the following parameters. Mixture of text, integer and
-vectors.
+vectors
 }
 \seealso{
 \code{\link{multi_release}} for more details.

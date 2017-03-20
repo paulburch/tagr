@@ -2,24 +2,30 @@
 % Please edit documentation in R/multi_release.R
 \name{multi_release}
 \alias{multi_release}
-\title{For a Type 1 fishery the adjusted releases are calculate as follows}
+\title{Multiple tag release estimate of population size}
 \usage{
-multi_release(tags, catch, pars)
+multi_release(tags, hauls, pars)
 }
 \arguments{
-\item{tags}{matrix that specifies the vector of the annual numbers of marked animals released (note 
-these must be whole numbers)}
+\item{tags}{matrix (or dataframe?) where the first column specifies the annual releases and
+subsequent columns the annual recaptures by release cohort (rows). Note 
+these must be whole numbers}
 
-\item{catch}{- these are by haul!! vector of the number or weight of animals
- captured and checked 
-for tags by haul on the second survey}
+\item{hauls}{matrix (or dataframe?) where the first column represents the
+untagged recaptures and subsequent columns the recaptures by release cohort 
+with the first (oldest) cohort to the left and the last (youngest) to the
+right}
 
 \item{pars}{list of model parameters}
 }
 \description{
-1) Initial tag-induced mortality is applied
+Estimate population size from multiple release, single recapture tagging data
 }
 \details{
+For a Type 1 fishery the adjusted releases are calculate as follows
+
+1) Initial tag-induced mortality is applied
+
 2) Within season recaptures divided by the tag reporting rate are removed
 
 3) Natural mortality and chronic tag loss and tag-induced mortality is applied.

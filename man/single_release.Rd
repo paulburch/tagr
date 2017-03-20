@@ -56,18 +56,23 @@ For a Type 1 fishery the adjusted releases are calculate as follows
 
 3) Natural mortality and chronic tag loss and tag-induced mortality is applied.
 
-For a fishery that operates throughout the year (Ricker Type 2) fishing and natural mortality
-competed to deplete the tagged population. The adjusted releases are calculated as follows
+For a fishery that operates throughout the year (Ricker Type 2) fishing and 
+natural mortality competed to deplete the tagged population. The adjusted 
+releases are calculated as follows
 
 1) Initial tag-induced mortality is applied
 
-2) Half of the within season recaptures divided by the tag reporting rate are removed
+2) Half of the within season recaptures divided by the tag reporting rate are
+removed
 
-3) Half of the natural mortality and chronic tag loss and tag-induced mortality is applied
+3) Half of the natural mortality and chronic tag loss and tag-induced 
+mortality is applied
 
-4) The remaining within season recaptures divided by the tag reporting rate are removed
+4) The remaining within season recaptures divided by the tag reporting rate 
+are removed
 
-5) The remaining natural mortality and chronic tag loss and tag-induced mortality is applied.
+5) The remaining natural mortality and chronic tag loss and tag-induced 
+mortality is applied.
 }
 \examples{
 ## Chapman estimates of population numbers
