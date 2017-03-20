@@ -1,33 +1,5 @@
 ##*******************************************###
 ## This file implements single release tag-return models
-## We consider the following parameters that adjust 
-## Except for initial tag loss and mortality they are expressed as 
-## instantaneous rates
-## Initial tag induced mortality / shedding (these are confounded unless there is double tagging)
-## Reporting rate
-## Optional
-## any subsequent recaptures & number of years    - vector
-## natural mortality (instantanous)
-## chronic (ongoing) tag shedding                 - vector (if integer use rep())
-## chronic (ongoing) tag induced mortality (confounded with shedding if no double tagging) - vector (if integer use rep())
-##
-##*******************************************###
-## TODO
-## Think about adding how double tagging affects tag-loss
-## Add the estimated number of tags in the population
-## Add the estimation of multiple methods from the same bootstrapped sample
-##
-##*******************************************###
-## How do we structure equations
-## lets use the parameterisation of @Hoenig1998mixing
-## Ni: Number tagged and released in year i
-## M: Instantaneous natural mortality
-## F: Instantaneous fishing mortality
-## phi: probabiliity of surviving being tagged and retaining the tag (in the short term)
-## phi_m: intital tag mortality
-## phi_s: intital tag shedding
-## lambda: tag reporting rate
-## u(F,M): exploitation rate
 
 ## investigate further http://adv-r.had.co.nz/Exceptions-Debugging.html#condition-handling
 check_srelease_inputs <- function(tags, catch, recaps){
