@@ -26,38 +26,6 @@
 NULL
 #> NULL
 
-#' Check multiple release single recapture model inputs
-#' 
-#' Check multiple release single recapture model inputs
-#' 
-#' Check the inputs for \code{\link{multi_release}}
-#' @param tags tag releases and recaptures
-#' @param hauls haul data of the year to calculate the estimate
-#' @param pars model parameters
-#' @name check_mrelease
-NULL       
-#> NULL
-
-#' @export
-#' @rdname check_mrelease
-check_mrelease_data <- function(tags, hauls){
-  ## define the check variable
-  check <- TRUE
-  ## add checks
-  ## return check
-  check
-}
-
-#' @export
-#' @rdname check_mrelease
-check_mrelease_pars <- function(pars) {
-  ## define the check variable
-  check=TRUE
-  ## add checks
-  ## return check
-  check
-}
-
 #' Multiple tag release estimate of population size
 #' 
 #' Estimate population size from multiple release, single recapture tagging data
@@ -108,7 +76,7 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   recs <- tags[,-1]
   ## we'll assume all of the checks have been done
   ## create a matrix to store the available tags at the end of each year
-  avail_tags <- matrix(NA, nrow=nrow(recs), ncol=ncol(recs))
+  avail_tags <- matrix(NA, nrow=nrow(recs), ncol=ncol(recs)-1)
   ## calculate the available tags based on Ricker fishery type
   if(pars[["type"]] == 1){
     ## calculate the available tags for each cohort (row)
@@ -180,16 +148,14 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
       }
     }
   }else stop("either Ricker type 1 or type 2 fishery must be specified")
-  ## we now have the available tags by year and would like to estimate population size
-  ## cohort tags
-  n_years <- nrow(hauls)-1
+  ## now estimate population size from the available tags by year 
+  n_years <- ncol(hauls)-1
   ## adjust the recaptures by cohort by reporting rate in the last year
   recap_cohort <- colSums(hauls[,-1]) / pars[["reporting"]][n_years]
   ## the catch (numbers) is the total number of fish 
   catch <- sum(hauls)
   ## define storage for the cohort estimates
-  ##* what is recs???
-  cohort_est <- rep(NA, nrow(recs))
+  cohort_est <- rep(NA, ncol(hauls)-1)
   ## then calculate population size based on the method 
   if(pars[["method"]]=="Petersen"){
     ## Petersen population estimate overall and by cohort
@@ -211,16 +177,18 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
                                   pars[["mean_wt"]])
     }
   }else stop("method and unit combination not available")
-  ## store the data
+  ## add names
+  names(cohort_est) <- names(recap_cohort)
+  names(est) <- "Est"
   ## then collate the results
-  ##* so this needs to be rewritten
-  obj <- list("Tags" = tags, #* do we need tags?
+  obj <- list("Tags" = tags, 
               "Hauls" = hauls,
               "Pars" = pars,
               "Avail_tags" = avail_tags,
               "Est" = c(est, cohort_est))
   ## add class 'mrelease'
   class(obj) <- 'mrelease'
+  ## return the mrelease object
   obj
 }
 
