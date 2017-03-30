@@ -1,4 +1,4 @@
-## 
+## tag-based estimators of population size 
 
 #' Petersen estimators
 #' 
@@ -24,8 +24,7 @@ chapman_n <- function(tags, catch, recaps, check_type="srelease"){
   ## check function inputs
   switch(check_type,
          srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
-         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)},
-         zero_recaps = {check <- check_zero_recaps(tags, catch, recaps)})
+         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)})
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate
@@ -47,8 +46,7 @@ chapman_wt <- function(tags, catch, recaps, mean_wt=0, check="srelease"){
   ## check function inputs
   switch(check_type,
          srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
-         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)},
-         zero_recaps = {check <- check_zero_recaps(tags, catch, recaps)})
+         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)})
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate
@@ -70,8 +68,7 @@ petersen <- function(tags, catch, recaps, check="srelease"){
   ## check function inputs
   switch(check_type,
          srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
-         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)},
-         zero_recaps = {check <- check_zero_recaps(tags, catch, recaps)})
+         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)})
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate
