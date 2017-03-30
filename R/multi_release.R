@@ -148,6 +148,8 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
       }
     }
   }else stop("either Ricker type 1 or type 2 fishery must be specified")
+  ## extract the available tags in current year
+  current_tags <- avail_tags[,ncol(avail_tags)]
   ## now estimate population size from the available tags by year 
   n_years <- ncol(hauls)-1
   ## adjust the recaptures by cohort by reporting rate in the last year
@@ -159,26 +161,27 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   ## then calculate population size based on the method 
   if(pars[["method"]]=="Petersen"){
     ## Petersen population estimate overall and by cohort
-    est <- petersen(sum(avail_tags), catch, sum(recap_cohort), 
+    est <- petersen(sum(current_tags), catch, sum(recap_cohort), 
                     check_type="mrelease")[["N_hat"]]
     for(i in 1:nrow(recs)){
-      cohort_est[i] <- petersen(avail_tags[i], catch, recap_cohort[i],
+      cohort_est[i] <- petersen(current_tags[i], catch, recap_cohort[i],
                                 check_type="mrelease")[["N_hat"]]
     }
   }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("numbers")){
     ## Chapman population estimate overall and by cohort
-    est <- chapman_n(sum(avail_tags), catch, sum(recap_cohort),
+    est <- chapman_n(sum(current_tags), catch, sum(recap_cohort),
                      check_type="mrelease")[["N_hat"]]
     for(i in 1:nrow(recs)){
-      cohort_est[i] <- chapman_n(avail_tags[i], catch, recap_cohort[i],
+      cohort_est[i] <- chapman_n(current_tags[i], catch, recap_cohort[i],
                                  check_type="mrelease")[["N_hat"]]
     }
   }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("kg", "tonnes")){
     ## Chapman weight
-    est <- chapman_wt(sum(avail_tags), catch, sum(recap_cohort), pars[["mean_wt"]],
+    est <- chapman_wt(sum(current_tags), catch, 
+                      sum(recap_cohort),pars[["mean_wt"]],
                       check_type="mrelease")[["N_hat"]]
     for(i in 1:nrow(recs)){
-      cohort_est[i] <- chapman_wt(sum(avail_tags), catch, 
+      cohort_est[i] <- chapman_wt(sum(current_tags), catch, 
                                   sum(recap_cohort), pars[["mean_wt"]],
                                   check_type="mrelease")[["N_hat"]]
     }
