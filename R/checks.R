@@ -1,6 +1,7 @@
 ## check function inputs
+## investigate further 
+## http://adv-r.had.co.nz/Exceptions-Debugging.html#condition-handling
 
-## investigate further http://adv-r.had.co.nz/Exceptions-Debugging.html#condition-handling
 check_srelease_inputs <- function(tags, catch, recaps){
   ## define the check variable
   check <- TRUE
@@ -19,7 +20,7 @@ check_srelease_inputs <- function(tags, catch, recaps){
     check <- FALSE
     warning("more tags have been recaptured than were released")
   }
-  ## if there are no recaptures we don't estimate population size, or alternately it could be infinity
+  ## if there are no recaptures we don't estimate population size
   if(recaps==0){
     check <- FALSE
     warning("there are zero recapures population size not estimated")
