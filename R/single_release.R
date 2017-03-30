@@ -8,7 +8,8 @@
 #' 
 #' 2) Within season recaptures divided by the tag reporting rate are removed
 #' 
-#' 3) Natural mortality and chronic tag loss and tag-induced mortality is applied.
+#' 3) Natural mortality and chronic tag loss and tag-induced mortality is
+#'  applied.
 #' 
 #' For a fishery that operates throughout the year (Ricker Type 2) fishing and 
 #' natural mortality competed to deplete the tagged population. The adjusted 
@@ -89,7 +90,8 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
   if(!unit %in% c("numbers", "kg", "tonnes")) 
     stop("incorrect units must be numbers, kg or tonnes")
   ## so we expect to have more than one
-  if(length(catch) != length(recaps)) stop("catch and recaptures must be of the same length")
+  if(length(catch) != length(recaps)) 
+    stop("catch and recaptures must be of the same length")
   ## more checks as they come to mind
   ## if catch and recaps are length 1 we can't bootstrap, 
   ## however this isn't necessarily a problem
@@ -105,7 +107,8 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
   }
   ## check inputs are correct length, again replace with a function
   if(any(length(reporting)!=n_years, length(nat_mort)!=n_years, 
-         length(chronic_shed)!=n_years, length(chronic_mort)!=n_years)) stop("Inputs are not of the same length")  
+         length(chronic_shed)!=n_years, length(chronic_mort)!=n_years)) 
+    stop("Inputs are not of the same length")  
   ## calculate the adjusted numbers
   ## if there are zero recaptures add an NA
   if(sum(recaps)==0){
@@ -124,7 +127,7 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
           ## remove recaptures scaled for reporting rate (could improve)
           adj_tags <- adj_tags - (prior_recaps[i] / reporting[i])
           ## apply natural mortality etc
-          adj_tags <- adj_tags*exp(-nat_mort[i] -chronic_shed[i] -chronic_mort[i])
+          adj_tags <- adj_tags*exp(-nat_mort[i]-chronic_shed[i]-chronic_mort[i])
       }else if(type==2){
         ## calculate the adjusted releases based on tag-induced mortality
         if(i==1){
@@ -133,11 +136,11 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
         }
         ## remove half recaptures scaled for reporting rate (could improve)
         adj_tags <- adj_tags - 0.5*(prior_recaps[i] / reporting[i])
-        adj_tags <- adj_tags*exp(0.5*(-nat_mort[i] -chronic_shed[i] -chronic_mort[i]))
+        adj_tags <- adj_tags*exp(0.5*(-nat_mort[i]-chronic_shed[i]-chronic_mort[i]))
         adj_tags <- adj_tags - 0.5*(prior_recaps[i] / reporting[i])
-        adj_tags <- adj_tags*exp(0.5*(-nat_mort[i] -chronic_shed[i] -chronic_mort[i]))
+        adj_tags <- adj_tags*exp(0.5*(-nat_mort[i]-chronic_shed[i]-chronic_mort[i]))
       }else stop("type of fishery is not defined")
-    ## now adjusted recaptures in the survey season are obtained by dividing by lambda
+    ## adjust recaptures in the survey season by dividing by reporting rate 
     adj_recaps <- sum(recaps) / reporting[n_years]
     ## now check that the adjusted releases are > 0
     if(adj_tags <= 0){
@@ -186,8 +189,10 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
 #' @rdname bootstrap
 bootstrap.srelease <- function(x, nboot, ...){
   ## check the there are sufficient rows in the data
-  if(nrow(x$Hauls) <= 1) stop("must be more than one haul to undertake bootstrap")
-  if(nrow(x$Hauls) < 10) warning("there are less than 10 hauls used in the bootstrap")
+  if(nrow(x$Hauls) <= 1) 
+    stop("must be more than one haul to undertake bootstrap")
+  if(nrow(x$Hauls) < 10) 
+    warning("there are less than 10 hauls used in the bootstrap")
   ## extract the various components of x
   tags <- x$Releases
   hauls <- x$Hauls
@@ -214,16 +219,19 @@ bootstrap.srelease <- function(x, nboot, ...){
         ## remove the recaptures scaled for reporting rate and rounding up
         adj_tags <- ceiling(adj_tags - (prior_recaps[k] / reporting[k]))
         ## apply tag shedding and natural mortality 
-        adj_tags <- rbinom(n=1, size=adj_tags, prob=exp(-nat_mort[k]-chronic_shed[k]-chronic_mort[k]))
+        adj_tags <- rbinom(n=1, size=adj_tags, 
+                           prob=exp(-nat_mort[k]-chronic_shed[k]-chronic_mort[k]))
       }else if(x$Type == 2){
         ## remove half recaptures scaled for reporting rate and rounding up
         adj_tags <- ceiling(adj_tags - 0.5*(prior_recaps[k] / reporting[k]))
         ## apply half tag shedding and natural mortality 
-        adj_tags <- rbinom(n=1, size=adj_tags, prob=exp(0.5*(-nat_mort[k]-chronic_shed[k]-chronic_mort[k])))
+        adj_tags <- rbinom(n=1, size=adj_tags, 
+                           prob=exp(0.5*(-nat_mort[k]-chronic_shed[k]-chronic_mort[k])))
         ## remove second half of the recaptures
         adj_tags <- ceiling(adj_tags - 0.5*(prior_recaps[k] / reporting[k]))
         ## apply half tag shedding and natural mortality 
-        adj_tags <- rbinom(n=1, size=adj_tags, prob=exp(0.5*(-nat_mort[k]-chronic_shed[k]-chronic_mort[k])))
+        adj_tags <- rbinom(n=1, size=adj_tags, 
+                           prob=exp(0.5*(-nat_mort[k]-chronic_shed[k]-chronic_mort[k])))
       }else stop("type of fishery is not defined")
     }
     ## check adj_tags >=1 otherwise don't estimate population size and return NA
@@ -283,8 +291,10 @@ summary.srelease <- function(object, ...){
   print(x$Estimate)
   cat("With cv", sqrt(x$Estimate["var_N"]) / x$Estimate["N_hat"], "\n")
   ## summarise the inputs
-  cat(x$Releases, "tags were released and", sum(x$PriorRecaps), "were subsequently recaptured prior to this season \n")
-  cat(sum(x$Hauls["catch"]), x$Unit, "were captured in the current survey and", sum(x$Hauls["recaps"]), "were tagged \n")
+  cat(x$Releases, "tags were released and", sum(x$PriorRecaps),
+      "were subsequently recaptured prior to this season \n")
+  cat(sum(x$Hauls["catch"]), x$Unit, "were captured in the current survey and",
+      sum(x$Hauls["recaps"]), "were tagged \n")
   cat("The following parameters were specified \n")
   cat("Initial tag-induced mortality =", x$TagMort, "\n")
   cat("Tag reporting rates by season =", x$Reporting, "\n")
@@ -311,14 +321,19 @@ summary.bsamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
   ## extract the information regarding the 
   ## print the model inputs 
   cat(object$srelease_obj$Method, "estimate of", object$srelease_obj$Unit, "\n")
-  cat(object$srelease_obj$Releases, "tags were released and", sum(object$srlease_obj$PriorRecaps), "were subsequently recaptured in previous seasons \n")
-  cat(sum(object$srelease_obj$Hauls$catch), object$srelease_obj$Unit, "were captured in the current survey and ", sum(object$srelease_obj$Hauls$recaps), " were tagged \n")
+  cat(object$srelease_obj$Releases, "tags were released and", 
+      sum(object$srlease_obj$PriorRecaps), 
+      "were subsequently recaptured in previous seasons \n")
+  cat(sum(object$srelease_obj$Hauls$catch), object$srelease_obj$Unit,
+      "were captured in the current survey and ", 
+      sum(object$srelease_obj$Hauls$recaps), " were tagged \n")
   cat("The following parameters were specified \n")
   cat("Initial tag-induced mortality =", object$srelease_obj$TagMort, "\n")
   cat("Tag reporting rates by season =", object$srelease_obj$Reporting, "\n")
   cat("Natural mortality by season =", object$srelease_obj$NatMort, "\n")
   cat("Chronic tag shedding by season =", object$srelease_obj$ChronicShed, "\n")
-  cat("Chronic tag-induced mortality by season =", object$srelease_obj$ChronicMort, "\n")
+  cat("Chronic tag-induced mortality by season =", 
+      object$srelease_obj$ChronicMort, "\n")
   ## construct the output
   out <- c(object$srelease_obj$Est[1], se, cv, quants)
   #names(out) <- c("Estimate", "lower", "upper")
