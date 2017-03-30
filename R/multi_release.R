@@ -188,7 +188,7 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   }else stop("method and unit combination not available")
   ## add names
   names(cohort_est) <- names(recap_cohort)
-  names(est) <- "Est"
+  names(est) <- "Combined"
   ## then collate the results
   obj <- list("Tags" = tags, 
               "Hauls" = hauls,
