@@ -159,22 +159,27 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   ## then calculate population size based on the method 
   if(pars[["method"]]=="Petersen"){
     ## Petersen population estimate overall and by cohort
-    est <- petersen(sum(avail_tags), catch, sum(recap_cohort))
+    est <- petersen(sum(avail_tags), catch, sum(recap_cohort), 
+                    check_type="mrelease")
     for(i in 1:nrow(recs)){
-      cohort_est[i] <- petersen(avail_tags[i], catch, recap_cohort[i])
+      cohort_est[i] <- petersen(avail_tags[i], catch, recap_cohort[i],
+                                check_type="mrelease")
     }
   }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("numbers")){
     ## Chapman population estimate overall and by cohort
-    est <- chapman_n(sum(avail_tags), catch, sum(recap_cohort))
+    est <- chapman_n(sum(avail_tags), catch, sum(recap_cohort),
+                     check_type="mrelease")
     for(i in 1:nrow(recs)){
-      cohort_est[i] <- chapman_n(avail_tags[i], catch, recap_cohort[i])
+      cohort_est[i] <- chapman_n(avail_tags[i], catch, recap_cohort[i],
+                                 check_type="mrelease")
     }
   }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("kg", "tonnes")){
     ## Chapman weight
-    est <- chapman_wt(sum(avail_tags), catch, sum(recap_cohort), pars[["mean_wt"]])
+    est <- chapman_wt(sum(avail_tags), catch, sum(recap_cohort), pars[["mean_wt"]],
+                      check_type="mrelease")
     for(i in 1:nrow(recs)){
       cohort_est[i] <- chapman_wt(sum(avail_tags), catch, sum(recap_cohort), 
-                                  pars[["mean_wt"]])
+                                  pars[["mean_wt"]], check_type="mrelease")
     }
   }else stop("method and unit combination not available")
   ## add names
@@ -191,4 +196,3 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   ## return the mrelease object
   obj
 }
-
