@@ -1,3 +1,11 @@
+CHANGES in tagr VERSION 0.1.0
+
+o new multi_release function
+
+o upgrade to roxygen version 6.0
+
+o option to calculate population size with zero recaptures  
+
 CHANGES in tagr VERSION 0.0.15
 
 o update of documentation
