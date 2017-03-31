@@ -2,9 +2,6 @@
 % Please edit documentation in R/single_release.R
 \name{single_release}
 \alias{single_release}
-\alias{chapman_n}
-\alias{chapman_wt}
-\alias{petersen}
 \title{Single tag release estimate of population size}
 \usage{
 single_release(tags, catch, recaps, mean_wt = 0, prior_recaps = 0, method,
@@ -54,7 +51,8 @@ For a Type 1 fishery the adjusted releases are calculate as follows
 
 2) Within season recaptures divided by the tag reporting rate are removed
 
-3) Natural mortality and chronic tag loss and tag-induced mortality is applied.
+3) Natural mortality and chronic tag loss and tag-induced mortality is
+ applied.
 
 For a fishery that operates throughout the year (Ricker Type 2) fishing and 
 natural mortality competed to deplete the tagged population. The adjusted 

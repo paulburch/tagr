@@ -7,11 +7,11 @@
 \alias{petersen}
 \title{Petersen estimators}
 \usage{
-chapman_n(tags, catch, recaps)
+chapman_n(tags, catch, recaps, check_type = "srelease")
 
-chapman_wt(tags, catch, recaps, mean_wt = 0)
+chapman_wt(tags, catch, recaps, mean_wt = 0, check = "srelease")
 
-petersen(tags, catch, recaps)
+petersen(tags, catch, recaps, check = "srelease")
 }
 \arguments{
 \item{tags}{number of marked animals released (note these must be whole 
@@ -24,6 +24,10 @@ for tags by haul on the second survey}
 
 \item{mean_wt}{mean weight of a single fish (optional argument for Chapman
 weight method)}
+
+\item{check}{type of input checks "srelease" (default= single release checks)
+other options are "mrelease" (multiple release checks) and "zero_recaps"
+(include}
 }
 \description{
 Single tag recapture estimates Petersen, Lincoln Petersen estimators

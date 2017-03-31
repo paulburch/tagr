@@ -1,4 +1,4 @@
-## 
+## tag-based estimators of population size 
 
 #' Petersen estimators
 #' 
@@ -10,6 +10,9 @@
 #' @param recaps vector of number of marked animals recaptured by haul
 #' @param mean_wt mean weight of a single fish (optional argument for Chapman
 #'  weight method)
+#' @param check type of input checks "srelease" (default= single release checks)
+#' other options are "mrelease" (multiple release checks) and "zero_recaps"
+#' (include 
 #' @name petersen
 NULL
 #> NULL
@@ -17,9 +20,11 @@ NULL
 
 #' @export
 #' @rdname petersen
-chapman_n <- function(tags, catch, recaps){
+chapman_n <- function(tags, catch, recaps, check_type="srelease"){
   ## check function inputs
-  check <- check_srelease_inputs(tags, catch, recaps)
+  switch(check_type,
+         srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
+         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)})
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate
@@ -37,9 +42,11 @@ chapman_n <- function(tags, catch, recaps){
 
 #' @export
 #' @rdname petersen
-chapman_wt <- function(tags, catch, recaps, mean_wt=0){
+chapman_wt <- function(tags, catch, recaps, mean_wt=0, check="srelease"){
   ## check function inputs
-  check <- check_srelease_inputs(tags, catch, recaps)
+  switch(check_type,
+         srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
+         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)})
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate
@@ -57,9 +64,11 @@ chapman_wt <- function(tags, catch, recaps, mean_wt=0){
 
 #' @export
 #' @rdname petersen
-petersen <- function(tags, catch, recaps){
+petersen <- function(tags, catch, recaps, check="srelease"){
   ## check function inputs
-  check <- check_srelease_inputs(tags, catch, recaps)
+  switch(check_type,
+         srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
+         mrelease = {check <- check_mrelease_inputs(tags, catch, recaps)})
   ## if check passes calculate population size
   if(check){
     ## calculate the estimate

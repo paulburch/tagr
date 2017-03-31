@@ -12,6 +12,7 @@
 #' \code{browseVignettes(package = "tagr")}
 #'
 #' @docType package
+#' @importFrom stats quantile rbinom sd
 #' @name tagr
 NULL
 #> NULL
