@@ -318,7 +318,7 @@ bootstrap.mrelease <- function(x, nboot, ...){
     }
   }# end of loop over n_boot
   ## add names
-  names(boot_est) <- c("Est", names(recap_cohort))
+  names(boot_est) <- c("Est", names(k_recap_cohort))
   ## store the inputs and results 
   obj <- list("mrelease_obj" = x,
               "Boot_estimates" = boot_est)
