@@ -212,11 +212,13 @@ bootstrap.mrelease <- function(x, nboot, ...){
   ## extract the various components of x
   tags <- x$Tags
   hauls <- x$Hauls
-  pars <- x$
+  pars <- x$Pars
     ## the checks will identify any problems with the inputs
     rels <- tags[,1]
   ## this needs to be safer
   recs <- tags[,-1]
+  ## define the number of years
+  n_years <- ncol(hauls)-1
   ## object to store the bootstrapped estimates
   boot_est <- data.frame(matrix(NA, nrow=nboot, ncol=n_years + 1))
   ## loop over the number of simulations 
@@ -266,7 +268,6 @@ bootstrap.mrelease <- function(x, nboot, ...){
       ## add the type 2 
     }else stop("either Ricker type 1 or type 2 fishery must be specified")
     ## now estimate population size from the available tags by year 
-    n_years <- ncol(hauls)-1
     ## extract the available tags in current year
     k_current_tags <- avail_tags[,ncol(avail_tags)]
     ## if there are too few tags available we don't estimate population size
