@@ -318,13 +318,34 @@ bootstrap.mrelease <- function(x, nboot, ...){
     }
   }# end of loop over n_boot
   ## add names
-  names(boot_est) <- c("Est", names(k_recap_cohort))
+  names(boot_est) <- c("boot_est", names(k_recap_cohort))
   ## store the inputs and results 
   obj <- list("mrelease_obj" = x,
               "Boot_estimates" = boot_est)
   ## add a class
-  class(obj) <- "bsamples"
+  class(obj) <- "mrsamples"
   ## return the results
   obj
 }
 
+#' S3 method for bootstrapped confidence intervals
+#'
+#' Calculate bootstrapped confidence intervals for object of
+#' class bsamples
+#' @param object object of class bsamples
+#' @param quantiles bootstrap quantiles (default 0.025, 0.5, 0.975)
+#' @param ... additional parameters
+#' @export
+summary.mrsamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
+  ## define the quantiles
+  quants <- quantile(object$Boot_estimates$boot_est, 
+                     probs=quantiles, na.rm=TRUE)
+  se <- sd(object$Boot_estimates$boot_est, na.rm=TRUE)
+  cv <- se / object$mrelease_obj$Est["Combined"]
+  names(se) <- "boot_SE"
+  names(cv) <- "boot_CV"
+  ## construct the output
+  out <- c(object$mrelease_obj$Est["Combined"], se, cv, quants)
+  #names(out) <- c("Estimate", "lower", "upper")
+  out
+}
