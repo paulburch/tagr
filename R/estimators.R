@@ -10,7 +10,7 @@
 #' @param recaps vector of number of marked animals recaptured by haul
 #' @param mean_wt mean weight of a single fish (optional argument for Chapman
 #'  weight method)
-#' @param check type of input checks "srelease" (default= single release checks)
+#' @param check_type of input checks "srelease" (default= single release checks)
 #' other options are "mrelease" (multiple release checks) and "zero_recaps"
 #' (include 
 #' @name petersen
@@ -42,7 +42,7 @@ chapman_n <- function(tags, catch, recaps, check_type="srelease"){
 
 #' @export
 #' @rdname petersen
-chapman_wt <- function(tags, catch, recaps, mean_wt=0, check="srelease"){
+chapman_wt <- function(tags, catch, recaps, mean_wt=0, check_type="srelease"){
   ## check function inputs
   switch(check_type,
          srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
@@ -64,7 +64,7 @@ chapman_wt <- function(tags, catch, recaps, mean_wt=0, check="srelease"){
 
 #' @export
 #' @rdname petersen
-petersen <- function(tags, catch, recaps, check="srelease"){
+petersen <- function(tags, catch, recaps, check_type="srelease"){
   ## check function inputs
   switch(check_type,
          srelease = {check <- check_srelease_inputs(tags, catch, recaps)},
