@@ -9,9 +9,9 @@
 \usage{
 chapman_n(tags, catch, recaps, check_type = "srelease")
 
-chapman_wt(tags, catch, recaps, mean_wt = 0, check = "srelease")
+chapman_wt(tags, catch, recaps, mean_wt = 0, check_type = "srelease")
 
-petersen(tags, catch, recaps, check = "srelease")
+petersen(tags, catch, recaps, check_type = "srelease")
 }
 \arguments{
 \item{tags}{number of marked animals released (note these must be whole 
@@ -22,12 +22,12 @@ for tags by haul on the second survey}
 
 \item{recaps}{vector of number of marked animals recaptured by haul}
 
-\item{mean_wt}{mean weight of a single fish (optional argument for Chapman
-weight method)}
-
-\item{check}{type of input checks "srelease" (default= single release checks)
+\item{check_type}{of input checks "srelease" (default= single release checks)
 other options are "mrelease" (multiple release checks) and "zero_recaps"
 (include}
+
+\item{mean_wt}{mean weight of a single fish (optional argument for Chapman
+weight method)}
 }
 \description{
 Single tag recapture estimates Petersen, Lincoln Petersen estimators
