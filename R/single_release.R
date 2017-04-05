@@ -60,12 +60,12 @@
 #' ## Chapman estimate of the population size of carp in a lake
 #' ## Load the carphauls data
 #' attach(carphauls)
-#' fit <- single_release(tags = 803, catch = carphauls$catch, 
-#'                       recaps = carphauls$tagged, 
-#'                       prior_recaps = c(108, 181, 82), 
-#'                       method = "Chapman", unit = "numbers",
-#'                       type = 2, tag_mort = 0.3, nat_mort = 0.04, 
-#'                       chronic_mort = 0.17)
+#' fit <- single_release(tags = 803, catch = carphauls$catch,
+#'                      recaps = carphauls$tagged,
+#'                      prior_recaps = c(108, 181, 82),
+#'                      method = "Chapman", unit = "numbers",
+#'                      type = 2, tag_mort = 0.3, nat_mort = 0.04,
+#'                      chronic_mort = 0.17)
 #' summary(fit)
 #' 
 #' ## Not run: 
@@ -115,6 +115,8 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
     ## if there are no recaptures we don't estimate population size
     N_hat=NA
     var_N=NA
+    est<- c(N_hat,var_N)
+    names(est)<-c("N_hat","var_N")
   }else{
     ## loop over the years to calculate 
     for(i in 1:n_years){
@@ -147,6 +149,8 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
       ## alternately N_hat could be zero
       N_hat <- NA 
       var_N <- NA
+      est<-c(N_hat,var_N)
+      names(est)<-c("N_hat","var_N")
       warning("predicted releases are less than zero based on other parameters")
     }else if(method=="Petersen"){
       ## Petersen numbers and weight are the same
@@ -176,7 +180,8 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
               "Reporting" = reporting,
               "NatMort" = nat_mort,
               "ChronicShed" = chronic_shed,
-              "ChronicMort" = chronic_mort)
+              "ChronicMort" = chronic_mort,
+              "TagsAvailable" = adj_tags)
   ## add class 'srelease'
   class(obj) <- 'srelease'
   obj
@@ -301,6 +306,7 @@ summary.srelease <- function(object, ...){
   cat("Natural mortality by season =", x$NatMort, "\n")
   cat("Chronic tag shedding by season =", x$ChronicShed, "\n")
   cat("Chronic tag-induced mortality by season =", x$ChronicMort, "\n")
+  cat("Tags available by season =", x$TagsAvailable,"\n")
 }
 
 #' S3 method for bootstrapped confidence intervals
