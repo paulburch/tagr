@@ -1,4 +1,8 @@
-CHANGES in tagr DEV VERSION 0.1.1
+CHANGES in tagr dev VERSION 0.1.1-9999
+
+o added TagsAvailable to obj list in single release
+
+CHANGES in tagr VERSION 0.1.1
 
 o new bootstrap method for 'mrelease' objects type 1 fisheries
 
