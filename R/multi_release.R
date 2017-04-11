@@ -181,7 +181,7 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
                       sum(recap_cohort),pars[["mean_wt"]],
                       check_type="mrelease")[["N_hat"]]
     for(i in 1:nrow(recs)){
-      cohort_est[i] <- chapman_wt(sum(current_tags), catch, 
+      cohort_est[i] <- chapman_wt(current_tags[i], catch, 
                                   recap_cohort[i], pars[["mean_wt"]],
                                   check_type="mrelease")[["N_hat"]]
     }
