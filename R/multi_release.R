@@ -182,7 +182,7 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
                       check_type="mrelease")[["N_hat"]]
     for(i in 1:nrow(recs)){
       cohort_est[i] <- chapman_wt(sum(current_tags), catch, 
-                                  sum(recap_cohort), pars[["mean_wt"]],
+                                  recap_cohort[i], pars[["mean_wt"]],
                                   check_type="mrelease")[["N_hat"]]
     }
   }else stop("method and unit combination not available")
