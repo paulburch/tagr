@@ -154,8 +154,8 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   n_years <- ncol(hauls)-1
   ## adjust the recaptures by cohort by reporting rate in the last year
   recap_cohort <- colSums(hauls[,-1]) / pars[["reporting"]][n_years]
-  ## the catch (numbers) is the total number of fish 
-  catch <- sum(hauls)
+  ## catch (numbers or weight) is the first column of hauls, includes tagged + untagged
+  catch <- sum(hauls[,1])
   ## define storage for the cohort estimates
   cohort_est <- rep(NA, ncol(hauls)-1)
   ## then calculate population size based on the method 
@@ -277,7 +277,7 @@ bootstrap.mrelease <- function(x, nboot, ...){
       ## resample the haul data
       k_samples <- sample(nrow(hauls), replace=TRUE)
       k_hauls <- hauls[k_samples,]
-      k_catch  <- sum(k_hauls)
+      k_catch  <- sum(k_hauls[,1])
       ## adjust the recaptures by cohort by reporting rate in the last year
       k_recap_cohort <- colSums(k_hauls[,-1]) / pars[["reporting"]][n_years]
       ## define storage for the cohort estimates
