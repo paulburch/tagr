@@ -1,6 +1,15 @@
-CHANGES in tagr dev VERSION 0.1.1-9999
+CHANGES in tagr VERSION 0.1.3
+
+o bug fix, weight based Chapman estimate using multi_release function was not
+provided with the catch weight by haul. The first column of haul data must now
+be the total catch weight (tagged+untagged). The subsequent columns still 
+represent the numbers of recaptured fish by release cohort
+
+CHANGES in tagr VERSION 0.1.2
 
 o added TagsAvailable to obj list in single release
+
+o bug fix in check_type
 
 CHANGES in tagr VERSION 0.1.1
 
