@@ -305,11 +305,11 @@ bootstrap.mrelease <- function(x, nboot, ...){
                c("kg", "tonnes")){
         ## Chapman weight
         est <- chapman_wt(sum(k_current_tags), k_catch, 
-                          sum(k_recap_cohort),pars[["mean_wt"]],
+                          sum(k_recap_cohort),mean_wt=pars[["mean_wt"]],
                           check_type="mrelease")[["N_hat"]]
         for(l in 1:nrow(recs)){
-          cohort_est[l] <- chapman_wt(sum(k_current_tags), k_catch, 
-                                      sum(k_recap_cohort), pars[["mean_wt"]],
+          cohort_est[l] <- chapman_wt(sum(k_current_tags[l]), k_catch, 
+                                      sum(k_recap_cohort[i]), pars[["mean_wt"]],
                                       check_type="mrelease")[["N_hat"]]
         }
       }else stop("method and unit combination not available")
