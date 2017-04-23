@@ -84,12 +84,12 @@ single_release(tags=100, catch=200, recaps=5, method="Chapman", type=1,
 ## Chapman estimate of the population size of carp in a lake
 ## Load the carphauls data
 attach(carphauls)
-fit <- single_release(tags = 803, catch = carphauls$catch, 
-                      recaps = carphauls$tagged, 
-                      prior_recaps = c(108, 181, 82), 
-                      method = "Chapman", unit = "numbers",
-                      type = 2, tag_mort = 0.3, nat_mort = 0.04, 
-                      chronic_mort = 0.17)
+fit <- single_release(tags = 803, catch = carphauls$catch,
+                     recaps = carphauls$tagged,
+                     prior_recaps = c(108, 181, 82),
+                     method = "Chapman", unit = "numbers",
+                     type = 2, tag_mort = 0.3, nat_mort = 0.04,
+                     chronic_mort = 0.17)
 summary(fit)
 
 ## Not run: 
