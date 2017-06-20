@@ -8,16 +8,19 @@
 \alias{bootstrap.srelease}
 \title{Bootstrap method for single release tag-return studies}
 \usage{
-bootstrap(x, nboot, ...)
+bootstrap(x, nboot, boot_zeroes = TRUE, ...)
 
-\method{bootstrap}{mrelease}(x, nboot, ...)
+\method{bootstrap}{mrelease}(x, nboot, boot_zeroes = TRUE, ...)
 
-\method{bootstrap}{srelease}(x, nboot, ...)
+\method{bootstrap}{srelease}(x, nboot, boot_zeroes = TRUE, ...)
 }
 \arguments{
 \item{x}{an object of class srelease}
 
 \item{nboot}{number of bootstrap samples}
+
+\item{boot_zeroes}{should bootstrap replicates with zero tag-recaptures be
+used to estimate population size (default=TRUE)}
 
 \item{...}{additional parameters}
 }
