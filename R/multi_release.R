@@ -203,7 +203,7 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
 
 #' @export
 #' @rdname bootstrap
-bootstrap.mrelease <- function(x, nboot, ...){
+bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
   ## check the there are sufficient rows in the data
   if(nrow(x$Hauls) <= 1) 
     stop("must be more than one haul to undertake bootstrap")
@@ -274,10 +274,21 @@ bootstrap.mrelease <- function(x, nboot, ...){
     if(sum(k_current_tags) <1){
       boot_est[k,] <- rep(NA, n_years + 1)
     }else{
-      ## resample the haul data
-      k_samples <- sample(nrow(hauls), replace=TRUE)
-      k_hauls <- hauls[k_samples,]
-      k_catch  <- sum(k_hauls[,1])
+      ## resample the hauls specifing whether to include replicates with zero recaps 
+      if(boot_zeroes){
+        ## include zero recpatures
+        k_samples <- sample(nrow(hauls), replace=TRUE)
+        k_hauls <- hauls[k_samples,]
+      }else if(!boot_zeroes){
+        ## resample if replicate hauls have zero recaptures
+        repeat {
+          k_samples <- sample(nrow(hauls), replace=TRUE)
+          k_hauls <- hauls[k_samples,]
+          if(sum(k_hauls[,-1])>=1) break
+        } 
+      }
+      ## calculate the catch
+      k_catch <- sum(k_hauls[,1])
       ## adjust the recaptures by cohort by reporting rate in the last year
       k_recap_cohort <- colSums(k_hauls[,-1]) / pars[["reporting"]][n_years]
       ## define storage for the cohort estimates
