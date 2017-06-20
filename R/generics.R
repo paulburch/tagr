@@ -11,8 +11,10 @@
 #' for more details.
 #' @param x an object of class srelease
 #' @param nboot number of bootstrap samples
+#' @param boot_zeroes should bootstrap replicates with zero tag-recaptures be
+#' used to estimate population size (default=TRUE)
 #' @param ... additional parameters
 #' @aliases bootstrap.srelease
 #' @export
-bootstrap <- function(x, nboot, ...)
+bootstrap <- function(x, nboot, boot_zeroes=TRUE, ...)
   UseMethod("bootstrap")
