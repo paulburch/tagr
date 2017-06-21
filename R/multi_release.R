@@ -158,37 +158,47 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
   catch <- sum(hauls[,1])
   ## define storage for the cohort estimates
   cohort_est <- rep(NA, ncol(hauls)-1)
-  ## then calculate population size based on the method 
-  if(pars[["method"]]=="Petersen"){
-    ## Petersen population estimate overall and by cohort
-    est <- petersen(sum(current_tags), catch, sum(recap_cohort), 
-                    check_type="mrelease")[["N_hat"]]
-    for(i in 1:nrow(recs)){
-      cohort_est[i] <- petersen(current_tags[i], catch, recap_cohort[i],
-                                check_type="mrelease")[["N_hat"]]
-    }
-  }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("numbers")){
-    ## Chapman population estimate overall and by cohort
-    est <- chapman_n(sum(current_tags), catch, sum(recap_cohort),
-                     check_type="mrelease")[["N_hat"]]
-    for(i in 1:nrow(recs)){
-      cohort_est[i] <- chapman_n(current_tags[i], catch, recap_cohort[i],
-                                 check_type="mrelease")[["N_hat"]]
-    }
-  }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("kg", "tonnes")){
-    ## Chapman weight
-    est <- chapman_wt(sum(current_tags), catch, 
-                      sum(recap_cohort),pars[["mean_wt"]],
+  if(sum(recap_cohort)==0){
+    ## if there are no recaptures we don't estimate population size
+    # N_hat=NA
+    # var_N=NA
+    est<- NA
+    # names(est)<-c("N_hat","var_N")
+  }else{
+    ## then calculate population size based on the method 
+    if(pars[["method"]]=="Petersen"){
+      ## Petersen population estimate overall and by cohort
+      est <- petersen(sum(current_tags), catch, sum(recap_cohort), 
                       check_type="mrelease")[["N_hat"]]
-    for(i in 1:nrow(recs)){
-      cohort_est[i] <- chapman_wt(current_tags[i], catch, 
-                                  recap_cohort[i], pars[["mean_wt"]],
+      for(i in 1:nrow(recs)){
+        cohort_est[i] <- petersen(current_tags[i], catch, recap_cohort[i],
                                   check_type="mrelease")[["N_hat"]]
-    }
-  }else stop("method and unit combination not available")
+      }
+    }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("numbers")){
+      ## Chapman population estimate overall and by cohort
+      est <- chapman_n(sum(current_tags), catch, sum(recap_cohort),
+                       check_type="mrelease")[["N_hat"]]
+      for(i in 1:nrow(recs)){
+        cohort_est[i] <- chapman_n(current_tags[i], catch, recap_cohort[i],
+                                   check_type="mrelease")[["N_hat"]]
+      }
+    }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("kg", "tonnes")){
+      ## Chapman weight
+      est <- chapman_wt(sum(current_tags), catch, 
+                        sum(recap_cohort),pars[["mean_wt"]],
+                        check_type="mrelease")[["N_hat"]]
+      for(i in 1:nrow(recs)){
+        cohort_est[i] <- chapman_wt(current_tags[i], catch, 
+                                    recap_cohort[i], pars[["mean_wt"]],
+                                    check_type="mrelease")[["N_hat"]]
+      }
+    }else stop("method and unit combination not available")
+  }
+  
   ## add names
   names(cohort_est) <- names(recap_cohort)
   names(est) <- "Combined"
+  
   ## then collate the results
   obj <- list("Tags" = tags, 
               "Hauls" = hauls,
@@ -213,14 +223,14 @@ bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
   tags <- x$Tags
   hauls <- x$Hauls
   pars <- x$Pars
-    ## the checks will identify any problems with the inputs
-    rels <- tags[,1]
+  ## the checks will identify any problems with the inputs
+  rels <- tags[,1]
   ## this needs to be safer
   recs <- tags[,-1]
   ## define the number of years
   n_years <- ncol(hauls)-1
   ## object to store the bootstrapped estimates
-  boot_est <- data.frame(matrix(NA, nrow=nboot, ncol=n_years + 2))
+  boot_est <- data.frame(matrix(NA, nrow=nboot, ncol=n_years + 3))
   ## loop over the number of simulations 
   for(k in 1:nboot){
     ## matrix to store the available tags at the end of each year
@@ -272,7 +282,8 @@ bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
     k_current_tags <- avail_tags[,ncol(avail_tags)]
     ## if there are too few tags available we don't estimate population size
     if(sum(k_current_tags) <1){
-      boot_est[k,] <- rep(NA, n_years + 1, sum(k_current_tags))
+      # 3 extra reps from Combined, tags available and recaps 
+      boot_est[k,] <- rep(NA, n_years + 3)
     }else{
       ## resample the hauls specifing whether to include replicates with zero recaps 
       if(boot_zeroes){
@@ -293,43 +304,47 @@ bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
       k_recap_cohort <- colSums(k_hauls[,-1]) / pars[["reporting"]][n_years]
       ## define storage for the cohort estimates
       cohort_est <- rep(NA, ncol(hauls)-1)
-      ## then calculate population size based on the method 
-      if(pars[["method"]]=="Petersen"){
-        ## Petersen population estimate overall and by cohort
-        est <- petersen(sum(k_current_tags), k_catch, sum(k_recap_cohort), 
-                        check_type="mrelease")[["N_hat"]]
-        for(l in 1:nrow(recs)){
-          cohort_est[l] <- petersen(k_current_tags[l], k_catch, 
-                                    k_recap_cohort[l],
-                                    check_type="mrelease")[["N_hat"]]
-        }
-      }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("numbers")){
-        ## Chapman population estimate overall and by cohort
-        est <- chapman_n(sum(k_current_tags), k_catch, sum(k_recap_cohort),
-                         check_type="mrelease")[["N_hat"]]
-        for(l in 1:nrow(recs)){
-          cohort_est[l] <- chapman_n(k_current_tags[l], k_catch, 
-                                     k_recap_cohort[i],
-                                     check_type="mrelease")[["N_hat"]]
-        }
-      }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in%
-               c("kg", "tonnes")){
-        ## Chapman weight
-        est <- chapman_wt(sum(k_current_tags), k_catch, 
-                          sum(k_recap_cohort),mean_wt=pars[["mean_wt"]],
+      if(sum(k_recap_cohort)==0){
+        est <- NA
+      }else{
+        ## then calculate population size based on the method 
+        if(pars[["method"]]=="Petersen"){
+          ## Petersen population estimate overall and by cohort
+          est <- petersen(sum(k_current_tags), k_catch, sum(k_recap_cohort), 
                           check_type="mrelease")[["N_hat"]]
-        for(l in 1:nrow(recs)){
-          cohort_est[l] <- chapman_wt(k_current_tags[l], k_catch, 
-                                      k_recap_cohort[i], pars[["mean_wt"]],
+          for(l in 1:nrow(recs)){
+            cohort_est[l] <- petersen(k_current_tags[l], k_catch, 
+                                      k_recap_cohort[l],
                                       check_type="mrelease")[["N_hat"]]
-        }
-      }else stop("method and unit combination not available")
-      ## add to the bootstrapped estimates
-      boot_est[k,] <- c(est, cohort_est, sum(k_current_tags))
+          }
+        }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in% c("numbers")){
+          ## Chapman population estimate overall and by cohort
+          est <- chapman_n(sum(k_current_tags), k_catch, sum(k_recap_cohort),
+                           check_type="mrelease")[["N_hat"]]
+          for(l in 1:nrow(recs)){
+            cohort_est[l] <- chapman_n(k_current_tags[l], k_catch, 
+                                       k_recap_cohort[i],
+                                       check_type="mrelease")[["N_hat"]]
+          }
+        }else if(pars[["method"]]=="Chapman" & pars[["unit"]] %in%
+                 c("kg", "tonnes")){
+          ## Chapman weight
+          est <- chapman_wt(sum(k_current_tags), k_catch, 
+                            sum(k_recap_cohort),mean_wt=pars[["mean_wt"]],
+                            check_type="mrelease")[["N_hat"]]
+          for(l in 1:nrow(recs)){
+            cohort_est[l] <- chapman_wt(k_current_tags[l], k_catch, 
+                                        k_recap_cohort[i], pars[["mean_wt"]],
+                                        check_type="mrelease")[["N_hat"]]
+          }
+        }else stop("method and unit combination not available")
+        ## add to the bootstrapped estimates
+      }  
+      boot_est[k,] <- c(est, cohort_est, sum(k_current_tags),sum(k_recap_cohort))
     }
   }# end of loop over n_boot
   ## add names
-  names(boot_est) <- c("boot_est", names(k_recap_cohort), "boot_avail_tags")
+  names(boot_est) <- c("boot_est", names(k_recap_cohort), "boot_avail_tags","boot_recaps")
   ## store the inputs and results 
   obj <- list("mrelease_obj" = x,
               "Boot_estimates" = boot_est)
