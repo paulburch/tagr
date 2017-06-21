@@ -1,3 +1,14 @@
+CHANGES in tagr dev VERSION 0.1.8
+
+o adding tags available for each bootstrap replicate to the output of 
+bootstrap.mrelease (request of Lucy Robinson)
+
+CHANGES in tagr VERSION 0.1.7
+
+o multi_release bootstrap method (bootstrap.mrelease) now has option to choose
+whether population size will be estimated for bootstrap replicates with zero
+recaptures (request of Keith Reid).
+
 CHANGES in tagr VERSION 0.1.5
 
 o bug fix, weight based Chapman bootstrap using multi_release function was instead

@@ -203,7 +203,7 @@ multi_release <- function(tags, hauls, pars)  { # will perhaps add hauls
 
 #' @export
 #' @rdname bootstrap
-bootstrap.mrelease <- function(x, nboot, ...){
+bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
   ## check the there are sufficient rows in the data
   if(nrow(x$Hauls) <= 1) 
     stop("must be more than one haul to undertake bootstrap")
@@ -220,7 +220,7 @@ bootstrap.mrelease <- function(x, nboot, ...){
   ## define the number of years
   n_years <- ncol(hauls)-1
   ## object to store the bootstrapped estimates
-  boot_est <- data.frame(matrix(NA, nrow=nboot, ncol=n_years + 1))
+  boot_est <- data.frame(matrix(NA, nrow=nboot, ncol=n_years + 2))
   ## loop over the number of simulations 
   for(k in 1:nboot){
     ## matrix to store the available tags at the end of each year
@@ -272,12 +272,23 @@ bootstrap.mrelease <- function(x, nboot, ...){
     k_current_tags <- avail_tags[,ncol(avail_tags)]
     ## if there are too few tags available we don't estimate population size
     if(sum(k_current_tags) <1){
-      boot_est[k,] <- rep(NA, n_years + 1)
+      boot_est[k,] <- rep(NA, n_years + 1, sum(k_current_tags))
     }else{
-      ## resample the haul data
-      k_samples <- sample(nrow(hauls), replace=TRUE)
-      k_hauls <- hauls[k_samples,]
-      k_catch  <- sum(k_hauls[,1])
+      ## resample the hauls specifing whether to include replicates with zero recaps 
+      if(boot_zeroes){
+        ## include zero recpatures
+        k_samples <- sample(nrow(hauls), replace=TRUE)
+        k_hauls <- hauls[k_samples,]
+      }else if(!boot_zeroes){
+        ## resample if replicate hauls have zero recaptures
+        repeat {
+          k_samples <- sample(nrow(hauls), replace=TRUE)
+          k_hauls <- hauls[k_samples,]
+          if(sum(k_hauls[,-1])>=1) break
+        } 
+      }
+      ## calculate the catch
+      k_catch <- sum(k_hauls[,1])
       ## adjust the recaptures by cohort by reporting rate in the last year
       k_recap_cohort <- colSums(k_hauls[,-1]) / pars[["reporting"]][n_years]
       ## define storage for the cohort estimates
@@ -314,11 +325,11 @@ bootstrap.mrelease <- function(x, nboot, ...){
         }
       }else stop("method and unit combination not available")
       ## add to the bootstrapped estimates
-      boot_est[k,] <- c(est, cohort_est)
+      boot_est[k,] <- c(est, cohort_est, sum(k_current_tags))
     }
   }# end of loop over n_boot
   ## add names
-  names(boot_est) <- c("boot_est", names(k_recap_cohort))
+  names(boot_est) <- c("boot_est", names(k_recap_cohort), "boot_avail_tags")
   ## store the inputs and results 
   obj <- list("mrelease_obj" = x,
               "Boot_estimates" = boot_est)
