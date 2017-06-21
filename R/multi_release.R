@@ -220,7 +220,7 @@ bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
   ## define the number of years
   n_years <- ncol(hauls)-1
   ## object to store the bootstrapped estimates
-  boot_est <- data.frame(matrix(NA, nrow=nboot, ncol=n_years + 1))
+  boot_est <- data.frame(matrix(NA, nrow=nboot, ncol=n_years + 2))
   ## loop over the number of simulations 
   for(k in 1:nboot){
     ## matrix to store the available tags at the end of each year
@@ -325,11 +325,11 @@ bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
         }
       }else stop("method and unit combination not available")
       ## add to the bootstrapped estimates
-      boot_est[k,] <- c(est, cohort_est)
+      boot_est[k,] <- c(est, cohort_est, sum(k_current_tags))
     }
   }# end of loop over n_boot
   ## add names
-  names(boot_est) <- c("boot_est", names(k_recap_cohort))
+  names(boot_est) <- c("boot_est", names(k_recap_cohort), "boot_avail_tags")
   ## store the inputs and results 
   obj <- list("mrelease_obj" = x,
               "Boot_estimates" = boot_est)
