@@ -272,7 +272,7 @@ bootstrap.mrelease <- function(x, nboot, boot_zeroes=TRUE, ...){
     k_current_tags <- avail_tags[,ncol(avail_tags)]
     ## if there are too few tags available we don't estimate population size
     if(sum(k_current_tags) <1){
-      boot_est[k,] <- rep(NA, n_years + 1)
+      boot_est[k,] <- rep(NA, n_years + 1, sum(k_current_tags))
     }else{
       ## resample the hauls specifing whether to include replicates with zero recaps 
       if(boot_zeroes){
