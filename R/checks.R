@@ -39,7 +39,7 @@ check_srelease_inputs <- function(tags, catch, recaps, zeroes=FALSE){
   check
 }
 
-check_mrelease_inputs <- function(tags, hauls, pars){
+check_mrelease_inputs <- function(tags, hauls, pars, zeroes=FALSE){
   ## define the check variable
   check <- TRUE
   ## add checks
