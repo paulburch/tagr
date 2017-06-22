@@ -324,22 +324,6 @@ summary.bsamples <- function(object, quantiles=c(0.025, 0.5, 0.975), ...){
   cv <- se / object$srelease_obj$Estimate["N_hat"]
   names(se) <- "boot_SE"
   names(cv) <- "boot_CV"
-  ## extract the information regarding the 
-  ## print the model inputs 
-  cat(object$srelease_obj$Method, "estimate of", object$srelease_obj$Unit, "\n")
-  cat(object$srelease_obj$Releases, "tags were released and", 
-      sum(object$srlease_obj$PriorRecaps), 
-      "were subsequently recaptured in previous seasons \n")
-  cat(sum(object$srelease_obj$Hauls$catch), object$srelease_obj$Unit,
-      "were captured in the current survey and ", 
-      sum(object$srelease_obj$Hauls$recaps), " were tagged \n")
-  cat("The following parameters were specified \n")
-  cat("Initial tag-induced mortality =", object$srelease_obj$TagMort, "\n")
-  cat("Tag reporting rates by season =", object$srelease_obj$Reporting, "\n")
-  cat("Natural mortality by season =", object$srelease_obj$NatMort, "\n")
-  cat("Chronic tag shedding by season =", object$srelease_obj$ChronicShed, "\n")
-  cat("Chronic tag-induced mortality by season =", 
-      object$srelease_obj$ChronicMort, "\n")
   ## construct the output
   out <- c(object$srelease_obj$Est[1], se, cv, quants)
   #names(out) <- c("Estimate", "lower", "upper")
