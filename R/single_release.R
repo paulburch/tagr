@@ -192,7 +192,7 @@ single_release <- function(tags, catch, recaps, mean_wt=0, prior_recaps=0,
 
 #' @export
 #' @rdname bootstrap
-bootstrap.srelease <- function(x, nboot, ...){
+bootstrap.srelease <- function(x, nboot, boot_zeroes=TRUE, ...){
   ## check the there are sufficient rows in the data
   if(nrow(x$Hauls) <= 1) 
     stop("must be more than one haul to undertake bootstrap")
